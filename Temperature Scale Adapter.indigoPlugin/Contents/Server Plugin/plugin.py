@@ -51,26 +51,18 @@ class Plugin(indigo.PluginBase):
 	def __del__(self):
 		indigo.PluginBase.__del__(self)
 
-	def get_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-		indigo.server.log("get_convertible_sensors")
-		return [
-			(rs.address, rs.name)
-			for rs in indigo.devices
-#				if 'ecobee3_remote_sensor' == rs.get('type')
+	def _get_eligible_sensors(self):
+		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(sv)), d.address, d.name, sk)
+			for d in indigo.devices
+			for (sk, sv) in d.states.items()
+				if (sk == "temperature") or (sk == "sensorValue")
 		]
-	def get_states_for_device(self, filter="", valuesDict=None, typeId="", targetId=0):
-		indigo.server.log("get_states_for_device")
-		for (k, v) in valuesDict.items():
-			self.debugLog("key: %s    value: %s" % (k, v) )
-#		d = [ x	for x in indigo.devices if x.address == valuesDict['baseSensorAddress']][0]
-		return []
 
-	def get_states_for_device_2(self, filter="", valuesDict=None, typeId="", targetId=0):
-		indigo.server.log("get_states_for_device_2")
-		for (k, v) in valuesDict.items():
-			self.debugLog("key: %s    value: %s" % (k, v) )
-#		d = [ x	for x in indigo.devices if x.address == valuesDict['baseSensorAddress']][0]
-		return []
+	def get_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+		return [
+			(address, name)
+			for (address, name, dev_address, dev_name, state_name) in self._get_eligible_sensors()
+		]
 
 	def validatePrefsConfigUi(self, valuesDict):
 		indigo.server.log("validatePrefsConfigGui")
