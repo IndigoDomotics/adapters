@@ -1,0 +1,142 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+import json
+import indigo
+import temperature_scale
+import logging
+
+
+DEBUG=True
+
+TEMP_FORMATTERS = {
+	'F': temperature_scale.Fahrenheit(),
+	'C': temperature_scale.Celsius(),
+	'K': temperature_scale.Kelvin(),
+	'R': temperature_scale.Rankine()
+}
+
+class IndigoLoggingHandler(logging.Handler):
+	def __init__(self, p):
+		 logging.Handler.__init__(self)
+		 self.plugin = p
+
+	def emit(self, record):
+		if record.levelno < 20:
+			self.plugin.debugLog(record.getMessage())
+		elif record.levelno < 40:
+			indigo.server.log(record.getMessage())
+		else:
+			self.plugin.errorLog(record.getMessage())
+
+class Plugin(indigo.PluginBase):
+
+	def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
+		indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
+		self.debug = DEBUG
+
+		self.active_converters = []
+
+		logHandler = IndigoLoggingHandler(self)
+
+		self.log = logging.getLogger('indigo.temp-converter.plugin')
+		self.log.addHandler(logHandler)
+
+		if DEBUG:
+			self.log.setLevel(logging.DEBUG)
+		else:
+			self.log.setLevel(logging.WARNING)
+
+	def __del__(self):
+		indigo.PluginBase.__del__(self)
+
+	def get_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+		indigo.server.log("get_convertible_sensors")
+		return [
+			(rs.address, rs.name)
+			for rs in indigo.devices
+#				if 'ecobee3_remote_sensor' == rs.get('type')
+		]
+	def get_states_for_device(self, filter="", valuesDict=None, typeId="", targetId=0):
+		indigo.server.log("get_states_for_device")
+		for (k, v) in valuesDict.items():
+			self.debugLog("key: %s    value: %s" % (k, v) )
+#		d = [ x	for x in indigo.devices if x.address == valuesDict['baseSensorAddress']][0]
+		return []
+
+	def get_states_for_device_2(self, filter="", valuesDict=None, typeId="", targetId=0):
+		indigo.server.log("get_states_for_device_2")
+		for (k, v) in valuesDict.items():
+			self.debugLog("key: %s    value: %s" % (k, v) )
+#		d = [ x	for x in indigo.devices if x.address == valuesDict['baseSensorAddress']][0]
+		return []
+
+	def validatePrefsConfigUi(self, valuesDict):
+		indigo.server.log("validatePrefsConfigGui")
+		# scaleInfo = valuesDict[TEMPERATURE_SCALE_PLUGIN_PREF]
+		# self._setTemperatureScale(scaleInfo[0])
+		return True
+
+	def startup(self):
+		self.debugLog(u"startup called")
+
+	def shutdown(self):
+		self.debugLog(u"shutdown called")
+
+	def get_orphan_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+		return self._filter_for_orphans(
+					self.get_convertible_sensors(filter, valuesDict, typeId, targetId),
+					self.active_converters
+				)
+
+	def _filter_for_orphans(self, tuples, actives):
+		return [
+			t for t in tuples
+				if not [ a for a in actives if a.address == t[0] ]
+		]
+
+
+	def deviceStartComm(self, dev):
+#		self.debugLog('deviceStartComm: %s' % dev)
+		if dev.model == 'Ecobee Remote Sensor':
+			self.debugLog("deviceStartComm: creating EcobeeRemoteSensor")
+			newDevice = EcobeeRemoteSensor(dev.pluginProps["address"], dev, self.ecobee)
+			self.active_remote_sensors.append(newDevice)
+
+			# set icon to 'temperature sensor'
+			dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
+
+			indigo.server.log("added remote sensor %s" % dev.pluginProps["address"])
+
+		# TODO: try to set initial name for new devices, as other plugins do.
+		# However, this doesn't work yet. Sad clown.
+		self.debugLog('device name: %s  ecobee name: %s' % (dev.name, newDevice.name))
+		if dev.name == 'new device' and newDevice.name:
+			dev.name = newDevice.name
+			dev.replaceOnServer()
+			self.debugLog('device name set to %s' % dev.name)
+
+#		indigo.server.log(u"device added; plugin props: %s" % dev.pluginProps)
+#		indigo.server.log(u"device added: %s" % dev)
+
+	def deviceStopComm(self, dev):
+		if dev.model == 'Ecobee Remote Sensor':
+			self.active_converters = [
+				rs for rs in self.active_converters
+					if rs.address != dev.pluginProps["address"]
+			]
+
+	def updateAllDevices(self):
+		for ers in self.active_converters:
+			ers.updateServer()
+
+	def runConcurrentThread(self):
+		try:
+
+			while True:
+				self.updateAllDevices()
+				self.sleep(15)
+
+		except self.StopThread:
+			pass	# Optionally catch the StopThread exception and do any needed cleanup.

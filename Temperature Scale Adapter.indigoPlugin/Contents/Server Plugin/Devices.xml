@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!-- If your plugin defines device types, you can define them here.
+
+	 Devices must specify their type (via the type attribute):
+
+		relay (ON/OFF/STATUS)
+		dimmer (ON/OFF/DIM/BRIGHTEN/SET BRIGHTNESS/STATUS)
+		speedcontrol (ON/OFF/SET SPEED LEVEL/SET SPEED INDEX/INCREASE/DECREASE/STATUS)
+		sensor (ON/OFF/STATUS)
+		thermostat
+		sprinkler
+		custom
+
+	 The first six inherit states, actions and events from Indigo. You can
+	 also specify your own custom actions and additional states, if needed.
+
+	 The Device example below specifies the thermostat type.
+
+	 Devices must also specify a unique typeID - so, for instance, if you define
+	 2 different thermostat type devices then your plugin can distinguish between
+	 the two by the typeID.
+-->
+
+<Devices>
+
+	<Device type="sensor" id="tempConvertedSensor">
+		<Name>Temperature Converted Sensor</Name>
+		<ConfigUI>
+			<Field id="baseSensorAddress" type="menu">
+				<Label>Base sensor:</Label>
+				<List class="self" method="get_convertible_sensors" dynamicReload="true"/>
+			</Field>
+			<Field id="baseSensorStateName" type="menu">
+				<Label>Sensor State Containing Temperature:</Label>
+				<List class="self" filter="" method="get_states_for_device" dynamicReload="true"/>
+				<CallbackMethod>get_states_for_device_2</CallbackMethod>
+			</Field>
+			<Field id="baseSensorNativeScale" type="menu" defaultValue="F">
+				<Label>Native Temperature Scale:</Label>
+				<List>
+					<Option value="F">Fahrenheit</Option>
+					<Option value="C">Celsius</Option>
+					<Option value="K">Kelvin</Option>
+					<Option value="R">Rankine</Option>
+				</List>
+			</Field>
+			<Field id="desiredScale" type="menu" defaultValue="C">
+				<Label>Desired Temperature Scale:</Label>
+				<List>
+					<Option value="F">Fahrenheit</Option>
+					<Option value="C">Celsius</Option>
+					<Option value="K">Kelvin</Option>
+					<Option value="R">Rankine</Option>
+				</List>
+			</Field>
+		</ConfigUI>
+		<States>
+			<State id="temperature" readonly="true">
+				<ValueType>Float</ValueType>
+				<TriggerLabel>Temperature</TriggerLabel>
+				<ControlPageLabel>Temperature</ControlPageLabel>
+			</State>
+		</States>
+		<UiDisplayStateId>temperature</UiDisplayStateId>
+	</Device>
+</Devices>
