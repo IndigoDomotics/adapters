@@ -53,9 +53,6 @@ class SensorAdapter:
 	def name(self):
 		return "%s['%s'] %s -> %s" % (self.native_device_name, self.native_device_state_name, self.native_scale.suffix(), self.desired_scale.suffix())
 
-	def native_device_id(self):
-		return self.native_device_id
-
 	def go(self):
 		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
 		cv = self.desired_scale.report(self.dev, "temperature", native_value)
@@ -150,7 +147,7 @@ class Plugin(indigo.PluginBase):
 
 	def deviceUpdated(self, origDev, newDev):
 		if newDev.id in self.adapters_for_device:
-			for cs in self.adapters_for_device[newdev.id]:
+			for cs in self.adapters_for_device[newDev.id]:
 				cs.go()
 
 	def runConcurrentThread(self):
