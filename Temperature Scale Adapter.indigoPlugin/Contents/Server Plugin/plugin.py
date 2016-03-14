@@ -33,6 +33,8 @@ class IndigoLoggingHandler(logging.Handler):
 
 class SensorAdapter:
 	def __init__(self, dev):
+		self.log = logging.getLogger('indigo.temp-converter.plugin')
+
 		self.dev = dev
 		self.address = dev.pluginProps["address"]
 
@@ -46,7 +48,7 @@ class SensorAdapter:
 		self.native_device_state_name = native_device_info[1]
 		self.native_device_name = indigo.devices[self.native_device_id].name
 
-		indigo.server.log("new adapter: %s" % self.name())
+		self.log.debug("new adapter: %s" % self.name())
 
 		self.go()
 
@@ -56,7 +58,7 @@ class SensorAdapter:
 	def go(self):
 		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
 		cv = self.desired_scale.report(self.dev, "temperature", native_value)
-		indigo.server.log("%s: %s -> %s" % (self.name(), self.native_scale.format(native_value), cv))
+		self.log.debug("%s: %s -> %s" % (self.name(), self.native_scale.format(native_value), cv))
 
 class Plugin(indigo.PluginBase):
 
@@ -104,14 +106,14 @@ class Plugin(indigo.PluginBase):
 		]
 
 	def validatePrefsConfigUi(self, valuesDict):
-		indigo.server.log("validatePrefsConfigGui")
+		self.log.debug("validatePrefsConfigGui")
 		return True
 
 	def startup(self):
-		self.debugLog(u"startup called")
+		self.log.debug(u"startup called")
 
 	def shutdown(self):
-		self.debugLog(u"shutdown called")
+		self.log.debug(u"shutdown called")
 
 	def get_orphan_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
 		return self._filter_for_orphans(
@@ -137,7 +139,7 @@ class Plugin(indigo.PluginBase):
 		# set icon to 'temperature sensor'
 		dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
 
-		indigo.server.log("added temperature adapter: %s" % newDevice.name())
+		self.log.debug("added temperature adapter: %s" % newDevice.name())
 
 	def deviceStopComm(self, dev):
 		self.active_adapters = [
