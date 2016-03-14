@@ -35,20 +35,31 @@ class SensorAdapter:
 	def __init__(self, dev):
 		self.dev = dev
 		self.address = dev.pluginProps["address"]
+
 		self.native_scale = TEMP_FORMATTERS[dev.pluginProps["nativeScale"]]
+		self.native_scale.set_input_scale(self.native_scale)
 		self.desired_scale = TEMP_FORMATTERS[dev.pluginProps["desiredScale"]]
 		self.desired_scale.set_input_scale(self.native_scale)
+
 		native_device_info = self.address.split(".", 1)
 		self.native_device_id = int(native_device_info[0])
 		self.native_device_state_name = native_device_info[1]
-		indigo.server.log("new adapter: %s['%s'] %s -> %s"
-			% (self.native_device_id, self.native_device_state_name, self.native_scale, self.desired_scale))
+		self.native_device_name = indigo.devices[self.native_device_id].name
+
+		indigo.server.log("new adapter: %s" % self.name())
+
 		self.go()
+
+	def name(self):
+		return "%s['%s'] %s -> %s" % (self.native_device_name, self.native_device_state_name, self.native_scale.suffix(), self.desired_scale.suffix())
+
+	def native_device_id(self):
+		return self.native_device_id
 
 	def go(self):
 		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
-		indigo.server.log("native value: %s" % native_value)
-		self.desired_scale.report(self.dev, "temperature", native_value)
+		cv = self.desired_scale.report(self.dev, "temperature", native_value)
+		indigo.server.log("%s: %s -> %s" % (self.name(), self.native_scale.format(native_value), cv))
 
 class Plugin(indigo.PluginBase):
 
@@ -97,8 +108,6 @@ class Plugin(indigo.PluginBase):
 
 	def validatePrefsConfigUi(self, valuesDict):
 		indigo.server.log("validatePrefsConfigGui")
-		# scaleInfo = valuesDict[TEMPERATURE_SCALE_PLUGIN_PREF]
-		# self._setTemperatureScale(scaleInfo[0])
 		return True
 
 	def startup(self):
@@ -121,14 +130,17 @@ class Plugin(indigo.PluginBase):
 
 
 	def deviceStartComm(self, dev):
-		self.debugLog('deviceStartComm: %s' % dev)
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
+
+		if not newDevice.native_device_id in self.adapters_for_device:
+			self.adapters_for_device[newDevice.native_device_id] = []
+		self.adapters_for_device[newDevice.native_device_id].append(newDevice)
 
 		# set icon to 'temperature sensor'
 		dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
 
-		indigo.server.log("added temperature adapter %s" % dev.pluginProps["address"])
+		indigo.server.log("added temperature adapter: %s" % newDevice.name())
 
 	def deviceStopComm(self, dev):
 		self.active_adapters = [
@@ -137,13 +149,15 @@ class Plugin(indigo.PluginBase):
 		]
 
 	def deviceUpdated(self, origDev, newDev):
-		pass
+		if newDev.id in self.adapters_for_device:
+			for cs in self.adapters_for_device[newdev.id]:
+				cs.go()
 
 	def runConcurrentThread(self):
 		try:
 
 			while True:
-				self.sleep(60)
+				self.sleep(3600)
 
 		except self.StopThread:
 			pass	# Optionally catch the StopThread exception and do any needed cleanup.
