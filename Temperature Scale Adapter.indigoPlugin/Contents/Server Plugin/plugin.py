@@ -18,6 +18,7 @@ TEMP_FORMATTERS = {
 }
 
 class IndigoLoggingHandler(logging.Handler):
+
 	def __init__(self, p):
 		 logging.Handler.__init__(self)
 		 self.plugin = p
@@ -30,18 +31,45 @@ class IndigoLoggingHandler(logging.Handler):
 		else:
 			self.plugin.errorLog(record.getMessage())
 
+class SensorAdapter:
+	def __init__(self, dev):
+		self.dev = dev
+		self.address = dev.pluginProps["address"]
+		self.native_scale = TEMP_FORMATTERS[dev.pluginProps["nativeScale"]]
+		self.desired_scale = TEMP_FORMATTERS[dev.pluginProps["desiredScale"]]
+		self.desired_scale.set_input_scale(self.native_scale)
+		native_device_info = self.address.split(".", 1)
+		self.native_device_id = int(native_device_info[0])
+		self.native_device_state_name = native_device_info[1]
+		indigo.server.log("new adapter: %s['%s'] %s -> %s"
+			% (self.native_device_id, self.native_device_state_name, self.native_scale, self.desired_scale))
+		self.go()
+
+	def go(self):
+		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
+		indigo.server.log("native value: %s" % native_value)
+		self.desired_scale.report(self.dev, "temperature", native_value)
+
 class Plugin(indigo.PluginBase):
 
 	def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
 		indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
 		self.debug = DEBUG
 
-		self.active_converters = []
+		self.active_adapters = []
+		self.adapters_for_device = {}
 
 		logHandler = IndigoLoggingHandler(self)
 
 		self.log = logging.getLogger('indigo.temp-converter.plugin')
 		self.log.addHandler(logHandler)
+
+		# subscribe to changes from all indigo devices, so we can update
+		#   our 'converted' temperature any time the native Temperature
+		#   changes.
+		# would be nice to only subscribe to changes from individual objects,
+		#   but that's not implemented yet.
+		indigo.devices.subscribeToChanges()
 
 		if DEBUG:
 			self.log.setLevel(logging.DEBUG)
@@ -54,7 +82,10 @@ class Plugin(indigo.PluginBase):
 	def _get_eligible_sensors(self):
 		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(sv)), d.address, d.name, sk)
 			for d in indigo.devices
+				# don't include instances of this plugin/device in the list
+				if (not d.pluginId) or (d.pluginId != self.pluginId)
 			for (sk, sv) in d.states.items()
+				# only return devices that have a matching state name
 				if (sk == "temperature") or (sk == "sensorValue")
 		]
 
@@ -79,7 +110,7 @@ class Plugin(indigo.PluginBase):
 	def get_orphan_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
 		return self._filter_for_orphans(
 					self.get_convertible_sensors(filter, valuesDict, typeId, targetId),
-					self.active_converters
+					self.active_adapters
 				)
 
 	def _filter_for_orphans(self, tuples, actives):
@@ -90,45 +121,29 @@ class Plugin(indigo.PluginBase):
 
 
 	def deviceStartComm(self, dev):
-#		self.debugLog('deviceStartComm: %s' % dev)
-		if dev.model == 'Ecobee Remote Sensor':
-			self.debugLog("deviceStartComm: creating EcobeeRemoteSensor")
-			newDevice = EcobeeRemoteSensor(dev.pluginProps["address"], dev, self.ecobee)
-			self.active_remote_sensors.append(newDevice)
+		self.debugLog('deviceStartComm: %s' % dev)
+		newDevice = SensorAdapter(dev)
+		self.active_adapters.append(newDevice)
 
-			# set icon to 'temperature sensor'
-			dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
+		# set icon to 'temperature sensor'
+		dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
 
-			indigo.server.log("added remote sensor %s" % dev.pluginProps["address"])
-
-		# TODO: try to set initial name for new devices, as other plugins do.
-		# However, this doesn't work yet. Sad clown.
-		self.debugLog('device name: %s  ecobee name: %s' % (dev.name, newDevice.name))
-		if dev.name == 'new device' and newDevice.name:
-			dev.name = newDevice.name
-			dev.replaceOnServer()
-			self.debugLog('device name set to %s' % dev.name)
-
-#		indigo.server.log(u"device added; plugin props: %s" % dev.pluginProps)
-#		indigo.server.log(u"device added: %s" % dev)
+		indigo.server.log("added temperature adapter %s" % dev.pluginProps["address"])
 
 	def deviceStopComm(self, dev):
-		if dev.model == 'Ecobee Remote Sensor':
-			self.active_converters = [
-				rs for rs in self.active_converters
-					if rs.address != dev.pluginProps["address"]
-			]
+		self.active_adapters = [
+			rs for rs in self.active_adapters
+				if rs.address != dev.pluginProps["address"]
+		]
 
-	def updateAllDevices(self):
-		for ers in self.active_converters:
-			ers.updateServer()
+	def deviceUpdated(self, origDev, newDev):
+		pass
 
 	def runConcurrentThread(self):
 		try:
 
 			while True:
-				self.updateAllDevices()
-				self.sleep(15)
+				self.sleep(60)
 
 		except self.StopThread:
 			pass	# Optionally catch the StopThread exception and do any needed cleanup.

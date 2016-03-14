@@ -7,10 +7,11 @@ DEFAULT_INPUT_SCALE = None
 # Internal canonical representation is Kelvin
 #
 class TemperatureScale:
-	input_scale = None
-
 	def __init__(self, i_s=DEFAULT_INPUT_SCALE):
-		input_scale = i_s
+		self.input_scale = i_s
+
+	def set_input_scale(self, i_s):
+		self.input_scale = i_s
 
 	def report(self, dev, stateKey, reading):
 		txt = self.format(reading)
@@ -21,7 +22,7 @@ class TemperatureScale:
 		return u"%s%s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
 
 	def convert(self, reading):
-		return self._from_canonical(input_scale.to_canonical(reading))
+		return self._from_canonical(self.input_scale._to_canonical(reading))
 
 
 class Fahrenheit(TemperatureScale):
