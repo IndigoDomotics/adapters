@@ -1,64 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import json
 import indigo
-import temperature_scale
+import indigo_logging_handler
+from sensor_adapter import SensorAdapter
 import logging
 
-
 DEBUG=True
-
-TEMP_FORMATTERS = {
-	'F': temperature_scale.Fahrenheit(),
-	'C': temperature_scale.Celsius(),
-	'K': temperature_scale.Kelvin(),
-	'R': temperature_scale.Rankine()
-}
-
-class IndigoLoggingHandler(logging.Handler):
-
-	def __init__(self, p):
-		 logging.Handler.__init__(self)
-		 self.plugin = p
-
-	def emit(self, record):
-		if record.levelno < 20:
-			self.plugin.debugLog(record.getMessage())
-		elif record.levelno < 40:
-			indigo.server.log(record.getMessage())
-		else:
-			self.plugin.errorLog(record.getMessage())
-
-class SensorAdapter:
-	def __init__(self, dev):
-		self.log = logging.getLogger('indigo.temp-converter.plugin')
-
-		self.dev = dev
-		self.address = dev.pluginProps["address"]
-
-		self.native_scale = TEMP_FORMATTERS[dev.pluginProps["nativeScale"]]
-		self.native_scale.set_input_scale(self.native_scale)
-		self.desired_scale = TEMP_FORMATTERS[dev.pluginProps["desiredScale"]]
-		self.desired_scale.set_input_scale(self.native_scale)
-
-		native_device_info = self.address.split(".", 1)
-		self.native_device_id = int(native_device_info[0])
-		self.native_device_state_name = native_device_info[1]
-		self.native_device_name = indigo.devices[self.native_device_id].name
-
-		self.log.debug("new adapter: %s" % self.name())
-
-		self.go()
-
-	def name(self):
-		return "%s['%s'] %s -> %s" % (self.native_device_name, self.native_device_state_name, self.native_scale.suffix(), self.desired_scale.suffix())
-
-	def go(self):
-		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
-		cv = self.desired_scale.report(self.dev, "temperature", native_value)
-		self.log.debug("%s: %s -> %s" % (self.name(), self.native_scale.format(native_value), cv))
 
 class Plugin(indigo.PluginBase):
 
@@ -68,8 +16,7 @@ class Plugin(indigo.PluginBase):
 
 		self.active_adapters = []
 		self.adapters_for_device = {}
-
-		logHandler = IndigoLoggingHandler(self)
+		logHandler = indigo_logging_handler.IndigoLoggingHandler(self)
 
 		self.log = logging.getLogger('indigo.temp-converter.plugin')
 		self.log.addHandler(logHandler)

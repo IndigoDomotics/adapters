@@ -4,6 +4,25 @@
 FORMAT_STRING = "{0:.1f}"
 DEFAULT_INPUT_SCALE = None
 
+def _decode_scale_name(key):
+	if 'F' == key:
+		return Fahrenheit()
+	elif 'C' == key:
+		return Celsius()
+	elif 'K' == key:
+		return Kelvin()
+	elif 'R' == key:
+		return Rankine()
+
+def temperature_converter(native_scale_key, desired_scale_key):
+	native_scale = _decode_scale_name(native_scale_key)
+	native_scale.set_input_scale(native_scale)
+
+	desired_scale = _decode_scale_name(desired_scale_key)
+	desired_scale.set_input_scale(native_scale)
+
+	return desired_scale
+
 # Internal canonical representation is Kelvin
 #
 class TemperatureScale:
@@ -13,6 +32,7 @@ class TemperatureScale:
 	def set_input_scale(self, i_s):
 		self.input_scale = i_s
 
+	# for indigo HA software
 	def report(self, dev, stateKey, reading):
 		txt = self.format(reading)
 		dev.updateStateOnServer(key=stateKey, value=self.convert(reading), decimalPlaces=1, uiValue=txt)
@@ -21,8 +41,14 @@ class TemperatureScale:
 	def format(self, reading):
 		return u"%s%s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
 
+	def format_native(self, reading):
+		return self.input_scale.format(reading)
+
 	def convert(self, reading):
 		return self._from_canonical(self.input_scale._to_canonical(reading))
+
+	def suffix_native(self):
+		return self.input_scale.suffix()
 
 
 class Fahrenheit(TemperatureScale):
