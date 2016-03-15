@@ -28,7 +28,7 @@
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
-				<List class="self" method="get_orphan_convertible_sensors"/>
+				<List class="self" method="get_orphan_eligible_sensors"/>
 			</Field>
 			<Field id="nativeScale" type="menu" defaultValue="F">
 				<Label>Native Temperature Scale:</Label>

@@ -6,13 +6,15 @@ import indigo_logging_handler
 from sensor_adapter import SensorAdapter
 import logging
 
-DEBUG=True
+DEBUGGING_ENABLED_MAP = {
+	"y" : True,
+	"n" : False
+}
 
 class Plugin(indigo.PluginBase):
 
 	def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
 		indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
-		self.debug = DEBUG
 
 		self.active_adapters = []
 		self.adapters_for_device = {}
@@ -28,15 +30,10 @@ class Plugin(indigo.PluginBase):
 		#   but that's not implemented yet.
 		indigo.devices.subscribeToChanges()
 
-		if DEBUG:
-			self.log.setLevel(logging.DEBUG)
-		else:
-			self.log.setLevel(logging.WARNING)
-
 	def __del__(self):
 		indigo.PluginBase.__del__(self)
 
-	def _get_eligible_sensors(self):
+	def get_eligible_sensors(self):
 		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(sv)), d.address, d.name, sk)
 			for d in indigo.devices
 				# don't include instances of this plugin/device in the list
@@ -46,36 +43,43 @@ class Plugin(indigo.PluginBase):
 				if (sk == "temperature") or (sk == "sensorValue")
 		]
 
-	def get_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-		return [
-			(address, name)
-			for (address, name, dev_address, dev_name, state_name) in self._get_eligible_sensors()
-		]
-
 	def validatePrefsConfigUi(self, valuesDict):
 		self.log.debug("validatePrefsConfigGui")
+		self.update_logging(bool(valuesDict['debuggingEnabled'] and "y" == valuesDict['debuggingEnabled']))
 		return True
+
+	def update_logging(self, is_debug):
+		if is_debug:
+			self.debug = True
+			self.log.setLevel(logging.DEBUG)
+			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.DEBUG)
+			self.log.debug("debug logging enabled")
+		else:
+			self.log.debug("debug logging disabled")
+			self.debug=False
+			self.log.setLevel(logging.INFO)
+			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.INFO)
 
 	def startup(self):
 		self.log.debug(u"startup called")
+		if "debuggingEnabled" not in self.pluginPrefs:
+			self.pluginPrefs["debuggingEnabled"] = "n"
+
+		self.update_logging(DEBUGGING_ENABLED_MAP[self.pluginPrefs["debuggingEnabled"]])
+
 
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
 
-	def get_orphan_convertible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-		return self._filter_for_orphans(
-					self.get_convertible_sensors(filter, valuesDict, typeId, targetId),
-					self.active_adapters
-				)
-
-	def _filter_for_orphans(self, tuples, actives):
+	def get_orphan_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
 		return [
-			t for t in tuples
-				if not [ a for a in actives if a.address == t[0] ]
+			(t[0], t[1])
+			for t in self.get_eligible_sensors()
+			if not [ a for a in self.active_adapters if a.address == t[0] ]
 		]
 
-
 	def deviceStartComm(self, dev):
+		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
 
@@ -93,8 +97,10 @@ class Plugin(indigo.PluginBase):
 			rs for rs in self.active_adapters
 				if rs.address != dev.pluginProps["address"]
 		]
+		# TODO: self.adapters_for_device
 
 	def deviceUpdated(self, origDev, newDev):
+		indigo.PluginBase.deviceUpdated(self, origDev, newDev)
 		if newDev.id in self.adapters_for_device:
 			for cs in self.adapters_for_device[newDev.id]:
 				cs.go()

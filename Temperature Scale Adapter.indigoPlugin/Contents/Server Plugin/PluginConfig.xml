@@ -2,4 +2,12 @@
 <PluginConfig>
 	<SupportURL>http://www.yourdomain.com/plugin/config.html</SupportURL>
 
+	<Field id ="debuggingEnabled" type="menu">
+		<Label>Debug logging enabled:</Label>
+		<List>
+			<Option value="n">no</Option>
+			<Option value="y">yes</Option>
+		</List>
+	</Field>
+	
 </PluginConfig>
