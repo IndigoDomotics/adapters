@@ -5,11 +5,20 @@ import indigo
 import indigo_logging_handler
 from sensor_adapter import SensorAdapter
 import logging
+import re
 
 DEBUGGING_ENABLED_MAP = {
 	"y" : True,
 	"n" : False
 }
+
+def _is_number(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
+
 
 class Plugin(indigo.PluginBase):
 
@@ -34,13 +43,13 @@ class Plugin(indigo.PluginBase):
 		indigo.PluginBase.__del__(self)
 
 	def get_eligible_sensors(self):
-		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(sv)), d.address, d.name, sk)
+		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))), d.address, d.name, sk)
 			for d in indigo.devices
 				# don't include instances of this plugin/device in the list
 				if (not d.pluginId) or (d.pluginId != self.pluginId)
 			for (sk, sv) in d.states.items()
 				# only return devices that have a matching state name
-				if (sk == "temperature") or (sk == "sensorValue")
+				if re.search("temperature|sensorValue", sk, re.IGNORECASE) and _is_number(sv)
 		]
 
 	def validatePrefsConfigUi(self, valuesDict):
