@@ -57,11 +57,11 @@ class Fahrenheit(TemperatureScale):
 
 	# F -> K
 	def _to_canonical(self, f_temp):
-		return (459.67 + f_temp) * 5 / 9
+		return (459.67 + float(f_temp)) * 5 / 9
 
 	# K -> F
 	def _from_canonical(self, k_temp):
-		return (1.8 * k_temp) - 459.67
+		return (1.8 * float(k_temp)) - 459.67
 
 	def suffix(self):
 		return u"°F"
@@ -73,11 +73,11 @@ class Celsius(TemperatureScale):
 
 	# C -> K
 	def _to_canonical(self, c_temp):
-		return 273.15 + c_temp
+		return float(c_temp) + 273.15
 
 	# K -> C
 	def _from_canonical(self, k_temp):
-		return (-273.15) + k_temp
+		return float(k_temp) - 273.15
 
 	def suffix(self):
 		return u"°C"
@@ -89,11 +89,11 @@ class Kelvin(TemperatureScale):
 
 	def _to_canonical(self, k_temp):
 		# Kelvin is the canonical representation, so nothing to do
-		return 0.0 + k_temp
+		return float(k_temp)
 
 	def _from_canonical(self, k_temp):
 		# Kelvin is the canonical representation, so nothing to do
-		return 0.0 + k_temp
+		return float(k_temp)
 
 	def suffix(self):
 		return u"K"
@@ -109,7 +109,7 @@ class Rankine(TemperatureScale):
 
 	# K -> R
 	def _from_canonical(self, k_temp):
-		return 1.8 * k_temp
+		return 1.8 * float(k_temp)
 
 	def suffix(self):
 		return u"°Ra"
