@@ -6,17 +6,11 @@ import indigo_logging_handler
 from sensor_adapter import SensorAdapter
 import logging
 import re
-from pyrescaler.temperature_scale import get_temperature_scale_options
+from pyrescaler.pyrescaler import *
 
 DEBUGGING_ENABLED_MAP = {
 	"y" : True,
 	"n" : False
-}
-
-SCALE_OPTIONS = {
-	"temperature": get_temperature_scale_options(),
-	"length": get_length_scale_options(),
-	"power": get_power_scale_options()
 }
 
 def _is_number(s):
@@ -38,6 +32,7 @@ class Plugin(indigo.PluginBase):
 
 		self.log = logging.getLogger('indigo.temp-converter.plugin')
 		self.log.addHandler(logHandler)
+		logging.getLogger('pyrescaler').addHandler(logHandler)
 
 		# subscribe to changes from all indigo devices, so we can update
 		#   our 'converted' temperature any time the native Temperature
@@ -95,36 +90,34 @@ class Plugin(indigo.PluginBase):
 		]
 
 	def scale_type_changed(self, valuesDict=None, typeId="", targetId=0):
-		self.log.error("scale_type_changed: valuesDict is: %s" % valuesDict)
+		self.log.debug("scale_type_changed: valuesDict is: %s" % valuesDict)
 
 	def get_scales(self, filter="", valuesDict=None, typeId="", targetId=0):
-		self.log.error("get_scales: valuesDict is: %s" % valuesDict)
-		return get_temperature_scale_options()
+		self.log.debug("get_scales: valuesDict is: %s" % valuesDict)
+		if not "scaleType" in valuesDict:
+			return []
+		self.log.debug("getting scale options for scale type: %s" % valuesDict["scaleType"])
+		opts = get_scale_options(scale_type=valuesDict["scaleType"])
+		self.log.debug("scale options: %s" % opts)
+		return opts
 
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
 
-		newProps = dev.pluginProps
-		newProps["SupportsSensorValue"] = True
-		dev.replacePluginPropsOnServer(newProps)
-
 		if not newDevice.native_device_id in self.adapters_for_device:
 			self.adapters_for_device[newDevice.native_device_id] = []
+
 		self.adapters_for_device[newDevice.native_device_id].append(newDevice)
 
-		# set icon to 'temperature sensor'
-		dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
-
-		self.log.debug("added temperature adapter: %s" % newDevice.name())
+		self.log.debug("added adapter: %s" % newDevice.name())
 
 	def deviceStopComm(self, dev):
 		self.active_adapters = [
 			rs for rs in self.active_adapters
 				if rs.address != dev.pluginProps["address"]
 		]
-		# TODO: self.adapters_for_device
 
 	def deviceUpdated(self, origDev, newDev):
 		indigo.PluginBase.deviceUpdated(self, origDev, newDev)

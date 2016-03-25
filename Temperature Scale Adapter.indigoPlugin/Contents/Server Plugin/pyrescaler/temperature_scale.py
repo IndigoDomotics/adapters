@@ -3,34 +3,7 @@
 
 from pyrescaler import *
 
-
-_scale_list = []
-
-def _all_scales():
-	return _scale_list
-	# return [
-	# 	('F', Fahrenheit, "Fahrenheit"),
-	# 	('C', Celsius, "Celsius"),
-	# 	('K', Kelvin, "Kelvin"),
-	# 	('R', Rankine, "Rankine"),
-	# ]
-
-def _decode_scale_name(key):
-	return [
-		a[1]()
-		for a in _scale_list
-		if a[0] == key
-	]
-
-def get_temperature_scale_options():
-	return [
-		(a[0], a[2])
-		for a in _scale_list
-	]
-
-
-def temperature_converter(native_scale_key, desired_scale_key):
-	return _decode_scale_name(desired_scale_key)._with_input_scale(_decode_scale_name(native_scale_key))
+SCALE_TYPE = "temperature"
 
 # Internal canonical representation is Kelvin
 #
@@ -54,7 +27,8 @@ class Fahrenheit(TemperatureScale):
 	def suffix(self):
 		return u"°F"
 
-_scale_list.append(('F', Fahrenheit, "Fahrenheit"))
+register_scale(SCALE_TYPE, "Fahrenheit", "F", Fahrenheit)
+
 
 class Celsius(TemperatureScale):
 	def __init__(self, input_scale=None):
@@ -71,7 +45,7 @@ class Celsius(TemperatureScale):
 	def suffix(self):
 		return u"°C"
 
-_scale_list.append(('C', Celsius, "Celsius"))
+register_scale(SCALE_TYPE, "Celsius", "C", Celsius)
 
 
 class Kelvin(TemperatureScale):
@@ -89,7 +63,7 @@ class Kelvin(TemperatureScale):
 	def suffix(self):
 		return u"K"
 
-_scale_list.append(('K', Kelvin, "Kelvin"))
+register_scale(SCALE_TYPE, "Kelvin", "K", Kelvin)
 
 
 class Rankine(TemperatureScale):
@@ -107,4 +81,4 @@ class Rankine(TemperatureScale):
 	def suffix(self):
 		return u"°Ra"
 
-_scale_list.append(('R', Rankine, "Rankine"))
+register_scale(SCALE_TYPE, "Rankine", "R", Rankine)

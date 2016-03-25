@@ -3,6 +3,37 @@
 
 FORMAT_STRING = "{0:.1f}"
 
+import logging
+
+_all_scales = {}
+_log = logging.getLogger('pyrescaler')
+
+def _decode_scale_name(scale_type, key):
+	return [
+		a[1]()
+		for a in _all_scales[scale_type]
+		if a[0] == key
+	][0]
+
+def get_scale_options(scale_type=None):
+	return [
+		(a[0], a[2])
+		for k in _all_scales.keys()
+			if (scale_type == None) or (scale_type == k)
+		for a in _all_scales[k]
+	]
+
+def register_scale(scale_type, scale_name, scale_key, scale_class):
+	if not scale_type in _all_scales:
+		_all_scales[scale_type] = []
+	_log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
+	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
+
+def get_converter(scale_type, native_scale_key, desired_scale_key):
+	return _decode_scale_name(scale_type, desired_scale_key)._with_input_scale(_decode_scale_name(scale_type, native_scale_key))
+
+
+
 class ScaledMeasurement:
 	def __init__(self, i_s=None):
 		if (i_s):
@@ -34,3 +65,6 @@ class ScaledMeasurement:
 
 	def suffix_native(self):
 		return self.input_scale.suffix()
+
+import temperature_scale
+import length_scale

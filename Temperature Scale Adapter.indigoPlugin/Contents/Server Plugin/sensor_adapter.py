@@ -1,6 +1,6 @@
 import logging
 import indigo
-from pyrescaler import *
+from pyrescaler.pyrescaler import get_converter
 
 class SensorAdapter:
 	def __init__(self, dev):
@@ -8,8 +8,13 @@ class SensorAdapter:
 
 		self.dev = dev
 		self.address = dev.pluginProps["address"]
+		self.scale_type = dev.pluginProps["scaleType"]
 
-		self.desired_scale = temperature_converter(dev.pluginProps["nativeScale"], dev.pluginProps["desiredScale"])
+		if 'temperature' == self.scale_type:
+			# set icon to 'temperature sensor'
+			dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
+
+		self.desired_scale = get_converter(self.scale_type, dev.pluginProps["nativeScale"], dev.pluginProps["desiredScale"])
 
 		native_device_info = self.address.split(".", 1)
 		self.native_device_id = int(native_device_info[0])
@@ -25,5 +30,5 @@ class SensorAdapter:
 
 	def go(self):
 		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
-		cv = self.desired_scale.report(self.dev, "temperature", native_value)
+		cv = self.desired_scale.report(self.dev, "sensorValue", native_value)
 		self.log.debug("%s: %s -> %s" % (self.name(), self.desired_scale.format_native(native_value), cv))

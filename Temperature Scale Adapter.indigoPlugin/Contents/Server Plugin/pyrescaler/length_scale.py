@@ -4,28 +4,7 @@
 from pyrescaler import *
 
 
-def _decode_scale_name(key):
-	if 'm' == key:
-		return Meters()
-	elif 'in' == key:
-		return Inches()
-	elif 'ft' == key:
-		return Feet()
-	elif 'yd' == key:
-		return Yards()
-	elif 'mi' == key:
-		return Miles()
-	elif 'cm' == key:
-		return Centimeters()
-	elif 'km' == key:
-		return Kilometers()
-	elif 'cbt' == key:
-		return Cubits()
-	else:
-		return None
-
-def length_converter(native_scale_key, desired_scale_key):
-	return _decode_scale_name(desired_scale_key)._with_input_scale(_decode_scale_name(native_scale_key))
+SCALE_TYPE = "length"
 
 # Internal canonical representation is meters
 #
@@ -49,6 +28,9 @@ class Inches(LengthScale):
 	def suffix(self):
 		return u"in"
 
+register_scale(SCALE_TYPE, "Inches", "in", Inches)
+
+
 class Feet(LengthScale):
 	def __init__(self, input_scale=None):
 		LengthScale.__init__(self, input_scale)
@@ -64,6 +46,9 @@ class Feet(LengthScale):
 	def suffix(self):
 		return u"ft"
 
+register_scale(SCALE_TYPE, "Feet", "ft", Feet)
+
+
 class Yards(LengthScale):
 	def __init__(self, input_scale=None):
 		LengthScale.__init__(self, input_scale)
@@ -78,6 +63,8 @@ class Yards(LengthScale):
 
 	def suffix(self):
 		return u"yd"
+
+register_scale(SCALE_TYPE, "Yards", "yd", Yards)
 
 # class Furlongs(LengthScale):
 # 	def __init__(self, input_scale=None):
@@ -98,6 +85,9 @@ class Miles(LengthScale):
 	def suffix(self):
 		return u"mi"
 
+register_scale(SCALE_TYPE, "Miles", "mi", Miles)
+
+
 class Centimeters(LengthScale):
 	def __init__(self, input_scale=None):
 		LengthScale.__init__(self, input_scale)
@@ -112,6 +102,9 @@ class Centimeters(LengthScale):
 
 	def suffix(self):
 		return u"cm"
+
+register_scale(SCALE_TYPE, "Centimeters", "cm", Centimeters)
+
 
 class Meters(LengthScale):
 	def __init__(self, input_scale=None):
@@ -128,6 +121,9 @@ class Meters(LengthScale):
 	def suffix(self):
 		return u"m"
 
+register_scale(SCALE_TYPE, "Meters", "m", Meters)
+
+
 class Kilometers(LengthScale):
 	def __init__(self, input_scale=None):
 		LengthScale.__init__(self, input_scale)
@@ -143,13 +139,44 @@ class Kilometers(LengthScale):
 	def suffix(self):
 		return u"km"
 
-# class NauticalMiles(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
-#
-# class Fathoms(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+register_scale(SCALE_TYPE, "Kilometers", "km", Kilometers)
+
+
+class NauticalMiles(LengthScale):
+	def __init__(self, input_scale=None):
+		LengthScale.__init__(self, input_scale)
+
+	# nmi -> m
+	def _to_canonical(self, x):
+		return float(x) * 1852
+
+	# m -> nmi
+	def _from_canonical(self, x):
+		return float(x) / 1852
+
+	def suffix(self):
+		return u"nmi"
+
+register_scale(SCALE_TYPE, "Nautical Miles", "nmi", NauticalMiles)
+
+
+class Fathoms(LengthScale):
+	def __init__(self, input_scale=None):
+		LengthScale.__init__(self, input_scale)
+
+	# fm -> m
+	def _to_canonical(self, x):
+		return float(x) * 1.8288
+
+	# m -> fm
+	def _from_canonical(self, x):
+		return float(x) / 1.8288
+
+	def suffix(self):
+		return u"fm"
+
+register_scale(SCALE_TYPE, "Fathoms", "fm", Fathoms)
+
 
 class Cubits(LengthScale):
 	def __init__(self, input_scale=None):
@@ -166,9 +193,27 @@ class Cubits(LengthScale):
 	def suffix(self):
 		return u"cbt"
 
-# class Hands(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+register_scale(SCALE_TYPE, "Cubits", "cbt", Cubits)
+
+
+class Hands(LengthScale):
+	def __init__(self, input_scale=None):
+		LengthScale.__init__(self, input_scale)
+
+	# h -> m
+	def _to_canonical(self, x):
+		return float(x) / 9.84252
+
+	# m -> h
+	def _from_canonical(self, x):
+		return float(x) * 9.84252
+
+	def suffix(self):
+		return u"h"
+
+register_scale(SCALE_TYPE, "Hands", "h", Hands)
+
+
 #
 # class Parsecs(LengthScale):
 # 	def __init__(self, input_scale=None):

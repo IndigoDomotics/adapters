@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Devices>
 
-	<Device type="custom" id="tempConvertedSensor">
+	<Device type="sensor" id="tempConvertedSensor">
 
 		<Name>Temperature Sensor Adapter</Name>
 
@@ -27,7 +27,7 @@
 				<Label>Desired Scale:</Label>
 				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
 			</Field>
-<!--			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/> -->
+			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 		</ConfigUI>
 
 	</Device>
