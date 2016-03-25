@@ -10,35 +10,25 @@
 				<Label>Sensor (state):</Label>
 				<List class="self" method="get_orphan_eligible_sensors"/>
 			</Field>
-			<Field id="nativeScale" type="menu" defaultValue="F">
-				<Label>Native Temperature Scale:</Label>
+			<Field id="scaleType" type="menu" defaultValue="temperature">
+				<Label>Scale Type:</Label>
 				<List>
-					<Option value="F">Fahrenheit</Option>
-					<Option value="C">Celsius</Option>
-					<Option value="K">Kelvin</Option>
-					<Option value="R">Rankine</Option>
+					<Option value="length">Length</Option>
+					<Option value="power">Power</Option>
+					<Option value="temperature">Temperature</Option>
 				</List>
+				<CallbackMethod>scale_type_changed</CallbackMethod>
 			</Field>
-			<Field id="desiredScale" type="menu" defaultValue="C">
-				<Label>Desired Temperature Scale:</Label>
-				<List>
-					<Option value="F">Fahrenheit</Option>
-					<Option value="C">Celsius</Option>
-					<Option value="K">Kelvin</Option>
-					<Option value="R">Rankine</Option>
-				</List>
+			<Field id="nativeScale" type="menu">
+				<Label>Native Scale:</Label>
+				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
 			</Field>
+			<Field id="desiredScale" type="menu">
+				<Label>Desired Scale:</Label>
+				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
+			</Field>
+<!--			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/> -->
 		</ConfigUI>
-
-		<States>
-			<State id="temperature" readonly="true">
-				<ValueType>Float</ValueType>
-				<TriggerLabel>Temperature</TriggerLabel>
-				<ControlPageLabel>Temperature</ControlPageLabel>
-			</State>
-		</States>
-
-		<UiDisplayStateId>temperature</UiDisplayStateId>
 
 	</Device>
 

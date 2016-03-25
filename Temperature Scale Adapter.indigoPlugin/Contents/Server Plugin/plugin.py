@@ -6,10 +6,17 @@ import indigo_logging_handler
 from sensor_adapter import SensorAdapter
 import logging
 import re
+from pyrescaler.temperature_scale import get_temperature_scale_options
 
 DEBUGGING_ENABLED_MAP = {
 	"y" : True,
 	"n" : False
+}
+
+SCALE_OPTIONS = {
+	"temperature": get_temperature_scale_options(),
+	"length": get_length_scale_options(),
+	"power": get_power_scale_options()
 }
 
 def _is_number(s):
@@ -48,8 +55,8 @@ class Plugin(indigo.PluginBase):
 				# don't include instances of this plugin/device in the list
 				if (not d.pluginId) or (d.pluginId != self.pluginId)
 			for (sk, sv) in d.states.items()
-				# only return devices that have a matching state name
-				if re.search("temperature|sensorValue", sk, re.IGNORECASE) and _is_number(sv)
+				# only return devices/states that have a numeric value
+				if _is_number(sv)
 		]
 
 	def validatePrefsConfigUi(self, valuesDict):
@@ -87,10 +94,21 @@ class Plugin(indigo.PluginBase):
 			if not [ a for a in self.active_adapters if a.address == t[0] ]
 		]
 
+	def scale_type_changed(self, valuesDict=None, typeId="", targetId=0):
+		self.log.error("scale_type_changed: valuesDict is: %s" % valuesDict)
+
+	def get_scales(self, filter="", valuesDict=None, typeId="", targetId=0):
+		self.log.error("get_scales: valuesDict is: %s" % valuesDict)
+		return get_temperature_scale_options()
+
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
+
+		newProps = dev.pluginProps
+		newProps["SupportsSensorValue"] = True
+		dev.replacePluginPropsOnServer(newProps)
 
 		if not newDevice.native_device_id in self.adapters_for_device:
 			self.adapters_for_device[newDevice.native_device_id] = []

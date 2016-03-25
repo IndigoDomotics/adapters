@@ -1,6 +1,6 @@
 import logging
 import indigo
-from temperature_scale import *
+from pyrescaler import *
 
 class SensorAdapter:
 	def __init__(self, dev):
