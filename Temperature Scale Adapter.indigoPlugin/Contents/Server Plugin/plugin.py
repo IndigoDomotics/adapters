@@ -44,8 +44,9 @@ class Plugin(indigo.PluginBase):
 	def __del__(self):
 		indigo.PluginBase.__del__(self)
 
-	def get_eligible_sensors(self):
-		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))), d.address, d.name, sk)
+	def get_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+		# return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))), d.address, d.name, sk)
+		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))))
 			for d in indigo.devices
 				# don't include instances of this plugin/device in the list
 				if (not d.pluginId) or (d.pluginId != self.pluginId)
@@ -82,18 +83,21 @@ class Plugin(indigo.PluginBase):
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
 
-	def get_orphan_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-		return [
-			(t[0], t[1])
-			for t in self.get_eligible_sensors()
-			if not [ a for a in self.active_adapters if a.address == t[0] ]
-		]
+	# def get_orphan_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+	# 	return [
+	# 		(t[0], t[1])
+	# 		for t in self.get_eligible_sensors()
+	# 		if not [ a for a in self.active_adapters if a.address == t[0] ]
+	# 	]
+
+	def address_changed(self, valuesDict=None, typeId="", targetId=0):
+		self.log.debug("address_changed")
 
 	def scale_type_changed(self, valuesDict=None, typeId="", targetId=0):
-		self.log.debug("scale_type_changed: valuesDict is: %s" % valuesDict)
+		self.log.debug("scale_type_changed")
 
 	def get_scales(self, filter="", valuesDict=None, typeId="", targetId=0):
-		self.log.debug("get_scales: valuesDict is: %s" % valuesDict)
+		self.log.debug("get_scales")
 		if not "scaleType" in valuesDict:
 			return []
 		self.log.debug("getting scale options for scale type: %s" % valuesDict["scaleType"])

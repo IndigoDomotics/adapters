@@ -8,9 +8,10 @@
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
-				<List class="self" method="get_orphan_eligible_sensors"/>
+				<List class="self" method="get_eligible_sensors"/>
+				<CallbackMethod>address_changed</CallbackMethod>
 			</Field>
-			<Field id="scaleType" type="menu" defaultValue="temperature">
+			<Field id="scaleType" type="menu">
 				<Label>Scale Type:</Label>
 				<List>
 					<Option value="length">Length</Option>
@@ -28,6 +29,8 @@
 				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
 			</Field>
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
+			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
 
 	</Device>
