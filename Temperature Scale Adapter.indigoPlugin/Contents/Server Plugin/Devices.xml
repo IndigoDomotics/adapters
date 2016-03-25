@@ -3,7 +3,7 @@
 
 	<Device type="sensor" id="tempConvertedSensor">
 
-		<Name>Temperature Sensor Adapter</Name>
+		<Name>Scale Adapter</Name>
 
 		<ConfigUI>
 			<Field id="address" type="menu">
