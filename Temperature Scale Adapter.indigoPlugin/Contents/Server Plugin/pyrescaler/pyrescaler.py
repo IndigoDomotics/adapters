@@ -48,12 +48,6 @@ class ScaledMeasurement:
 		self.input_scale = i_s
 		return self
 
-	# for indigo HA software
-	def report(self, dev, stateKey, reading):
-		txt = self.format(reading)
-		dev.updateStateOnServer(key=stateKey, value=self.convert(reading), decimalPlaces=1, uiValue=txt)
-		return txt
-
 	def format(self, reading):
 		return u"%s%s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
 

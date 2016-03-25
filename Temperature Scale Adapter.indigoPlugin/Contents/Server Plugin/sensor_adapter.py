@@ -28,7 +28,13 @@ class SensorAdapter:
 	def name(self):
 		return "%s['%s'] %s -> %s" % (self.native_device_name, self.native_device_state_name, self.desired_scale.suffix_native(), self.desired_scale.suffix())
 
+
 	def go(self):
 		native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
-		cv = self.desired_scale.report(self.dev, "sensorValue", native_value)
-		self.log.debug("%s: %s -> %s" % (self.name(), self.desired_scale.format_native(native_value), cv))
+
+		converted_txt = self.desired_scale.format(native_value)
+		converted_value = self.desired_scale.convert(native_value)
+
+		self.dev.updateStateOnServer(key="sensorValue", value=converted_value, decimalPlaces=1, uiValue=converted_txt)
+
+		self.log.debug("%s: %s -> %s" % (self.name(), self.desired_scale.format_native(native_value), converted_txt))
