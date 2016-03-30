@@ -49,7 +49,7 @@ class ScaledMeasurement:
 		return self
 
 	def format(self, reading):
-		return u"%s%s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
+		return u"%s %s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
 
 	def format_native(self, reading):
 		return self.input_scale.format(reading)
