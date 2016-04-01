@@ -83,13 +83,6 @@ class Plugin(indigo.PluginBase):
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
 
-	# def get_orphan_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-	# 	return [
-	# 		(t[0], t[1])
-	# 		for t in self.get_eligible_sensors()
-	# 		if not [ a for a in self.active_adapters if a.address == t[0] ]
-	# 	]
-
 	def address_changed(self, valuesDict=None, typeId="", targetId=0):
 		self.log.debug("address_changed")
 
@@ -107,6 +100,22 @@ class Plugin(indigo.PluginBase):
 
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
+
+		# added after initial release
+		if (not "scaleType" in dev.pluginProps) or (not "SupportsSensorValue" in dev.pluginProps) or (not "sensorValue" in dev.states):
+			self.log.warning("'rebooting' device")
+			# this seems to be the only thing that will reliably pick up the new
+			#   device type (changed from "custom" to "sensor" since initial release)
+			dev = indigo.device.changeDeviceTypeId(dev, "tempConvertedSensor")
+			propCopy = dev.pluginProps
+			propCopy.update({
+				"SupportsSensorValue": True,
+				"SupportsStatusRequest" : False,
+				"SupportsOnState" : False,
+				"scaleType" : "temperature",
+			});
+			dev.replacePluginPropsOnServer(propCopy)
+
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
 
