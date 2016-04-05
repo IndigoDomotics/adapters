@@ -142,7 +142,7 @@ class Plugin(indigo.PluginBase):
 		try:
 
 			while True:
-				self.sleep(3600)
+				self.sleep(5)
 
 		except self.StopThread:
 			pass	# Optionally catch the StopThread exception and do any needed cleanup.

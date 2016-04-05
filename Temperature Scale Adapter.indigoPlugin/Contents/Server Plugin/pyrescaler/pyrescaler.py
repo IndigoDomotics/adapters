@@ -62,3 +62,4 @@ class ScaledMeasurement:
 
 import temperature_scale
 import length_scale
+import power_scale
