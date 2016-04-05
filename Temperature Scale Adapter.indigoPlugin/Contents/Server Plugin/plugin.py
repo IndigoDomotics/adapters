@@ -6,6 +6,7 @@ import indigo_logging_handler
 from sensor_adapter import SensorAdapter
 import logging
 import re
+from pyrescaler.pyrescaler import *
 
 DEBUGGING_ENABLED_MAP = {
 	"y" : True,
@@ -31,6 +32,7 @@ class Plugin(indigo.PluginBase):
 
 		self.log = logging.getLogger('indigo.temp-converter.plugin')
 		self.log.addHandler(logHandler)
+		logging.getLogger('pyrescaler').addHandler(logHandler)
 
 		# subscribe to changes from all indigo devices, so we can update
 		#   our 'converted' temperature any time the native Temperature
@@ -42,14 +44,15 @@ class Plugin(indigo.PluginBase):
 	def __del__(self):
 		indigo.PluginBase.__del__(self)
 
-	def get_eligible_sensors(self):
-		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))), d.address, d.name, sk)
+	def get_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
+		# return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))), d.address, d.name, sk)
+		return [("%d.%s" % (d.id, sk), "%s (%s): %s" % (d.name, sk, "{0:.1f}".format(float(sv))))
 			for d in indigo.devices
 				# don't include instances of this plugin/device in the list
 				if (not d.pluginId) or (d.pluginId != self.pluginId)
 			for (sk, sv) in d.states.items()
-				# only return devices that have a matching state name
-				if re.search("temperature|sensorValue", sk, re.IGNORECASE) and _is_number(sv)
+				# only return devices/states that have a numeric value
+				if _is_number(sv)
 		]
 
 	def validatePrefsConfigUi(self, valuesDict):
@@ -80,33 +83,54 @@ class Plugin(indigo.PluginBase):
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
 
-	def get_orphan_eligible_sensors(self, filter="", valuesDict=None, typeId="", targetId=0):
-		return [
-			(t[0], t[1])
-			for t in self.get_eligible_sensors()
-			if not [ a for a in self.active_adapters if a.address == t[0] ]
-		]
+	def address_changed(self, valuesDict=None, typeId="", targetId=0):
+		self.log.debug("address_changed")
+
+	def scale_type_changed(self, valuesDict=None, typeId="", targetId=0):
+		self.log.debug("scale_type_changed")
+
+	def get_scales(self, filter="", valuesDict=None, typeId="", targetId=0):
+		self.log.debug("get_scales")
+		if not "scaleType" in valuesDict:
+			return []
+		self.log.debug("getting scale options for scale type: %s" % valuesDict["scaleType"])
+		opts = get_scale_options(scale_type=valuesDict["scaleType"])
+		self.log.debug("scale options: %s" % opts)
+		return opts
 
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
+
+		# added after initial release
+		if (not "scaleType" in dev.pluginProps) or (not "SupportsSensorValue" in dev.pluginProps) or (not "sensorValue" in dev.states):
+			self.log.warning("'rebooting' device")
+			# this seems to be the only thing that will reliably pick up the new
+			#   device type (changed from "custom" to "sensor" since initial release)
+			dev = indigo.device.changeDeviceTypeId(dev, "tempConvertedSensor")
+			propCopy = dev.pluginProps
+			propCopy.update({
+				"SupportsSensorValue": True,
+				"SupportsStatusRequest" : False,
+				"SupportsOnState" : False,
+				"scaleType" : "temperature",
+			});
+			dev.replacePluginPropsOnServer(propCopy)
+
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)
 
 		if not newDevice.native_device_id in self.adapters_for_device:
 			self.adapters_for_device[newDevice.native_device_id] = []
+
 		self.adapters_for_device[newDevice.native_device_id].append(newDevice)
 
-		# set icon to 'temperature sensor'
-		dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
-
-		self.log.debug("added temperature adapter: %s" % newDevice.name())
+		self.log.debug("added adapter: %s" % newDevice.name())
 
 	def deviceStopComm(self, dev):
 		self.active_adapters = [
 			rs for rs in self.active_adapters
 				if rs.address != dev.pluginProps["address"]
 		]
-		# TODO: self.adapters_for_device
 
 	def deviceUpdated(self, origDev, newDev):
 		indigo.PluginBase.deviceUpdated(self, origDev, newDev)
@@ -118,7 +142,7 @@ class Plugin(indigo.PluginBase):
 		try:
 
 			while True:
-				self.sleep(3600)
+				self.sleep(5)
 
 		except self.StopThread:
 			pass	# Optionally catch the StopThread exception and do any needed cleanup.
