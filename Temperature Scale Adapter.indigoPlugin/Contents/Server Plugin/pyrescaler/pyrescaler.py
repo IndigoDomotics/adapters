@@ -8,9 +8,9 @@ import logging
 _all_scales = {}
 _log = logging.getLogger('pyrescaler')
 
-def _decode_scale_name(scale_type, key):
+def _decode_scale_name(scale_type, key, precision=1):
 	return [
-		a[1]()
+		a[1](precision=precision)
 		for a in _all_scales[scale_type]
 		if a[0] == key
 	][0]
@@ -29,13 +29,25 @@ def register_scale(scale_type, scale_name, scale_key, scale_class):
 	_log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
 	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
 
-def get_converter(scale_type, native_scale_key, desired_scale_key):
+def get_converter(scale_type, native_scale_key, desired_scale_key, precision=1):
 	return _decode_scale_name(scale_type, desired_scale_key)._with_input_scale(_decode_scale_name(scale_type, native_scale_key))
 
 
 
 class ScaledMeasurement:
-	def __init__(self, i_s=None):
+	def __init__(self):
+		pass
+
+	def format(self, reading):
+		pass
+
+	def convert(self, reading):
+		pass
+
+class PredefinedScaledMeasurement(ScaledMeasurement):
+	def __init__(self, i_s=None, precision=1):
+		ScaledMeasurement.__init__(self)
+		self.precision = precision
 		if (i_s):
 			self.input_scale = i_s
 		else:
@@ -60,6 +72,19 @@ class ScaledMeasurement:
 	def suffix_native(self):
 		return self.input_scale.suffix()
 
+
 import temperature_scale
 import length_scale
 import power_scale
+
+class CustomScaledMeasurement(ScaledMeasurement):
+	def __init__(self, offset=0.0, multiplier=1.0, format_string="%d"):
+		self.offset = offset
+		self.multiplier = multiplier
+		self.format_string = format_string
+
+	def format(self, reading):
+		return self.format_string.format(self.convert(reading))
+
+	def convert(self, reading):
+		return (float(reading) * float(self.multiplier)) + float(self.offset)
