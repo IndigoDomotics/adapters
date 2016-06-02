@@ -85,6 +85,9 @@ class Plugin(indigo.PluginBase):
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
 
+	def open_browser_to_python_format_help(self, valuesDict=None, typeId="", targetId=0):
+		self.browserOpen("https://pyformat.info")
+
 	def address_changed(self, valuesDict=None, typeId="", targetId=0):
 		self.log.debug("address_changed")
 

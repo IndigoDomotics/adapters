@@ -56,7 +56,12 @@
 				<List class="self" method="get_eligible_sensors"/>
 				<CallbackMethod>address_changed</CallbackMethod>
 			</Field>
-
+			<Field id="mathLabel1" type="label" alignWithControl="true">
+				<Label>Conversion uses the following formula:</Label>
+			</Field>
+			<Field id="mathLabel2" type="label" alignWithControl="true">
+				<Label>result = [(native reading) * multiplier] + offset</Label>
+			</Field>
 			<Field id="multiplier" type="textfield" defaultValue="1.0">
 				<Label>Multiplier:</Label>
 			</Field>
@@ -67,6 +72,14 @@
 			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
 				<Label>Format:</Label>
 			</Field>
+			<Field id="formatLabel" type="label" alignWithControl="true">
+				<Label>Format is specified using the "new style" Python syntax.</Label>
+			</Field>
+			<Field id="openFormatHelp" type="button">
+		    <Label></Label>
+		    <Title>Formatting Help</Title>
+		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
+		  </Field>
 
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
