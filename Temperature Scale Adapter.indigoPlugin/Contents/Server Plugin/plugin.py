@@ -65,12 +65,14 @@ class Plugin(indigo.PluginBase):
 			self.debug = True
 			self.log.setLevel(logging.DEBUG)
 			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.DEBUG)
+			logging.getLogger("pyrescaler").setLevel(logging.DEBUG)
 			self.log.debug("debug logging enabled")
 		else:
 			self.log.debug("debug logging disabled")
 			self.debug=False
 			self.log.setLevel(logging.INFO)
 			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.INFO)
+			logging.getLogger("pyrescaler").setLevel(logging.INFO)
 
 	def startup(self):
 		self.log.debug(u"startup called")

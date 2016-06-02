@@ -24,7 +24,7 @@ class SensorAdapter:
 
 			self.precision = 1
 			if "precision" in dev.pluginProps:
-				self.precision = dev.pluginProps["precision"]
+				self.precision = int(dev.pluginProps["precision"])
 
 			if 'temperature' == self.scale_type:
 				# set icon to 'temperature sensor'

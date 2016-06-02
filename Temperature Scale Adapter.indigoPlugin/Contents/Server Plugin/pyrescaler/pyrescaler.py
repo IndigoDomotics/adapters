@@ -30,7 +30,7 @@ def register_scale(scale_type, scale_name, scale_key, scale_class):
 	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
 
 def get_converter(scale_type, native_scale_key, desired_scale_key, precision=1):
-	return _decode_scale_name(scale_type, desired_scale_key)._with_input_scale(_decode_scale_name(scale_type, native_scale_key))
+	return _decode_scale_name(scale_type, desired_scale_key, precision)._with_input_scale(_decode_scale_name(scale_type, native_scale_key))
 
 
 
@@ -61,7 +61,11 @@ class PredefinedScaledMeasurement(ScaledMeasurement):
 		return self
 
 	def format(self, reading):
-		return u"%s %s" % (FORMAT_STRING.format(self.convert(reading)), self.suffix())
+		format_with_precision = u"{{0:.{0:d}f}} {{1}}".format(self.precision)
+		_log.debug("resulting format with precision applied: %s" % format_with_precision)
+		result = format_with_precision.format(self.convert(reading), self.suffix())
+		_log.debug("formatted result: %s" % result)
+		return result
 
 	def format_native(self, reading):
 		return self.input_scale.format(reading)
@@ -78,7 +82,7 @@ import length_scale
 import power_scale
 
 class CustomScaledMeasurement(ScaledMeasurement):
-	def __init__(self, offset=0.0, multiplier=1.0, format_string="%d"):
+	def __init__(self, offset=0.0, multiplier=1.0, format_string="{0:.1f}"):
 		self.offset = offset
 		self.multiplier = multiplier
 		self.format_string = format_string
