@@ -28,6 +28,59 @@
 				<Label>Desired Scale:</Label>
 				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
 			</Field>
+
+			<Field id="precision" type="menu" defaultValue="1">
+				<Label>Precision:</Label>
+				<List>
+					<Option value="0">1</Option>
+					<Option value="1">1.0</Option>
+					<Option value="2">1.00</Option>
+					<Option value="3">1.000</Option>
+				</List>
+			</Field>
+
+			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
+			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
+		</ConfigUI>
+
+	</Device>
+
+	<Device type="sensor" id="customConvertedSensor">
+
+		<Name>Custom Scale Adapter</Name>
+
+		<ConfigUI>
+			<Field id="address" type="menu">
+				<Label>Sensor (state):</Label>
+				<List class="self" method="get_eligible_sensors"/>
+				<CallbackMethod>address_changed</CallbackMethod>
+			</Field>
+			<Field id="mathLabel1" type="label" alignWithControl="true">
+				<Label>Conversion uses the following formula:</Label>
+			</Field>
+			<Field id="mathLabel2" type="label" alignWithControl="true">
+				<Label>result = [(native reading) * multiplier] + offset</Label>
+			</Field>
+			<Field id="multiplier" type="textfield" defaultValue="1.0">
+				<Label>Multiplier:</Label>
+			</Field>
+			<Field id="offset" type="textfield" defaultValue="0.0">
+				<Label>Offset:</Label>
+			</Field>
+
+			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
+				<Label>Format:</Label>
+			</Field>
+			<Field id="formatLabel" type="label" alignWithControl="true">
+				<Label>Format is specified using the "new style" Python syntax.</Label>
+			</Field>
+			<Field id="openFormatHelp" type="button">
+		    <Label></Label>
+		    <Title>Formatting Help</Title>
+		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
+		  </Field>
+
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
