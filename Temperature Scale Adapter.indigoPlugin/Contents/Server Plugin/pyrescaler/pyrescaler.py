@@ -4,6 +4,7 @@
 FORMAT_STRING = "{0:.1f}"
 
 import logging
+from simpleeval import simple_eval
 
 _all_scales = {}
 _log = logging.getLogger('pyrescaler')
@@ -81,7 +82,7 @@ import temperature_scale
 import length_scale
 import power_scale
 
-class CustomScaledMeasurement(ScaledMeasurement):
+class AffineScaledMeasurement(ScaledMeasurement):
 	def __init__(self, offset=0.0, multiplier=1.0, format_string="{0:.1f}"):
 		self.offset = offset
 		self.multiplier = multiplier
@@ -92,3 +93,14 @@ class CustomScaledMeasurement(ScaledMeasurement):
 
 	def convert(self, reading):
 		return (float(reading) * float(self.multiplier)) + float(self.offset)
+
+class ArbitaryFormulaScaledMeasurement(ScaledMeasurement):
+	def __init__(self, formula="x", format_string="{0:.1f}"):
+		self.formula = formula
+		self.format_string = format_string
+
+	def format(self, reading):
+		return self.format_string.format(self.convert(reading))
+
+	def convert(self, reading):
+		return simple_eval(self.formula, names={"x": float(reading)})

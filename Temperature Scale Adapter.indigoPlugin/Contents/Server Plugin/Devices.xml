@@ -48,7 +48,7 @@
 
 	<Device type="sensor" id="customConvertedSensor">
 
-		<Name>Custom Scale Adapter</Name>
+		<Name>Custom Linear Scale Adapter</Name>
 
 		<ConfigUI>
 			<Field id="address" type="menu">
@@ -80,6 +80,43 @@
 		    <Title>Formatting Help</Title>
 		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 		  </Field>
+
+			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
+			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
+		</ConfigUI>
+
+	</Device>
+
+	<Device type="sensor" id="formulaConvertedSensor">
+
+		<Name>Custom Formula-Based Scale Adapter</Name>
+
+		<ConfigUI>
+			<Field id="address" type="menu">
+				<Label>Sensor (state):</Label>
+				<List class="self" method="get_eligible_sensors"/>
+				<CallbackMethod>address_changed</CallbackMethod>
+			</Field>
+
+			<Field id="mathLabel1" type="label" alignWithControl="true">
+				<Label>Mathematical function for conversion (use 'x' for input value)</Label>
+			</Field>
+			<Field id="formula" type="textfield" defaultValue="(2 * x) + 10">
+				<Label>Formula:</Label>
+			</Field>
+
+			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
+				<Label>Format:</Label>
+			</Field>
+			<Field id="formatLabel" type="label" alignWithControl="true">
+				<Label>Format is specified using the "new style" Python syntax.</Label>
+			</Field>
+			<Field id="openFormatHelp" type="button">
+				<Label></Label>
+				<Title>Formatting Help</Title>
+				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
+			</Field>
 
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
