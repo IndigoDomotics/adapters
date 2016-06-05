@@ -3,7 +3,7 @@
 
 	<Device type="sensor" id="tempConvertedSensor">
 
-		<Name>Scale Adapter</Name>
+		<Name>Predefined Scale Adapter</Name>
 
 		<ConfigUI>
 			<Field id="address" type="menu">
@@ -90,7 +90,7 @@
 
 	<Device type="sensor" id="formulaConvertedSensor">
 
-		<Name>Custom Formula-Based Scale Adapter</Name>
+		<Name>Custom Formula Adapter (numeric result)</Name>
 
 		<ConfigUI>
 			<Field id="address" type="menu">
@@ -100,9 +100,9 @@
 			</Field>
 
 			<Field id="mathLabel1" type="label" alignWithControl="true">
-				<Label>Mathematical function for conversion (use 'x' for input value)</Label>
+				<Label>Mathematical formula for conversion (use 'x' for input value)</Label>
 			</Field>
-			<Field id="formula" type="textfield" defaultValue="(2 * x) + 10">
+			<Field id="formula" type="textfield" defaultValue="(9/5 * x) + 32">
 				<Label>Formula:</Label>
 			</Field>
 
@@ -124,5 +124,49 @@
 		</ConfigUI>
 
 	</Device>
+
+	<Device type="custom" id="formulaConvertedSensorString">
+
+		<Name>Custom Formula Adapter (string result)</Name>
+
+		<ConfigUI>
+			<Field id="address" type="menu">
+				<Label>Sensor (state):</Label>
+				<List class="self" method="get_eligible_sensors"/>
+				<CallbackMethod>address_changed</CallbackMethod>
+			</Field>
+
+			<Field id="mathLabel1" type="label" alignWithControl="true">
+				<Label>Mathematical formula for conversion (use 'x' for input value)</Label>
+			</Field>
+			<Field id="formula" type="textfield" defaultValue="'a' if x == 2 else 'b' if x == 3 else 'c'">
+				<Label>Formula:</Label>
+			</Field>
+
+			<Field id="format" type="textfield" defaultValue="code {0}">
+				<Label>Format:</Label>
+			</Field>
+			<Field id="formatLabel" type="label" alignWithControl="true">
+				<Label>Format is specified using the "new style" Python syntax.</Label>
+			</Field>
+			<Field id="openFormatHelp" type="button">
+				<Label></Label>
+				<Title>Formatting Help</Title>
+				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
+			</Field>
+
+		</ConfigUI>
+
+		<States>
+			<State id="sensorValue">
+				<ValueType>String</ValueType>
+				<TriggerLabel>Sensor Value</TriggerLabel>
+				<ControlPageLabel>Sensor Value</ControlPageLabel>
+			</State>
+		</States>
+		<UiDisplayStateId>sensorValue</UiDisplayStateId>
+
+	</Device>
+
 
 </Devices>
