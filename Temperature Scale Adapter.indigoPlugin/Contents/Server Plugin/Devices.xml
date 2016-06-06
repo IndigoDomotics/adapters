@@ -46,7 +46,7 @@
 
 	</Device>
 
-	<Device type="sensor" id="customConvertedSensor">
+	<Device type="sensor" id="linearConvertedSensor">
 
 		<Name>Custom Linear Scale Adapter</Name>
 
@@ -105,6 +105,21 @@
 			<Field id="formula" type="textfield" defaultValue="(9/5 * x) + 32">
 				<Label>Formula:</Label>
 			</Field>
+			<Field id="numFormulaExample1" type="label" alignWithControl="true" fontSize="small">
+				<Label>examples:</Label>
+			</Field>
+			<Field id="numFormulaExample2" type="label" alignWithControl="true" fontSize="small">
+				<Label> (9/5 * x) + 32</Label>
+			</Field>
+			<Field id="numFormulaExample3" type="label" alignWithControl="true" fontSize="small">
+				<Label>  x ** 2 + 3 * x + 4</Label>
+			</Field>
+			<Field id="numFormulaExample4" type="label" alignWithControl="true" fontSize="small">
+				<Label> 1 if x == 2 else -1</Label>
+			</Field>
+			<Field id="numFormulaExample5" type="label" alignWithControl="true" fontSize="small">
+				<Label> 1 if x == 2 else -1 if x == 3 else 0</Label>
+			</Field>
 
 			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
 				<Label>Format:</Label>
@@ -141,6 +156,15 @@
 			</Field>
 			<Field id="formula" type="textfield" defaultValue="'a' if x == 2 else 'b' if x == 3 else 'c'">
 				<Label>Formula:</Label>
+			</Field>
+			<Field id="strFormulaExample1" type="label" alignWithControl="true" fontSize="small">
+				<Label>examples:</Label>
+			</Field>
+			<Field id="strFormulaExample2" type="label" alignWithControl="true" fontSize="small">
+				<Label> 'up' if x == 1 else 'down'</Label>
+			</Field>
+			<Field id="strFormulaExample3" type="label" alignWithControl="true" fontSize="small">
+				<Label> 'up' if x == 1 else 'down' if x == 0 else 'stuck'</Label>
 			</Field>
 
 			<Field id="format" type="textfield" defaultValue="code {0}">
