@@ -105,6 +105,7 @@ class Plugin(indigo.PluginBase):
 
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
+		dev.stateListOrDisplayStateIdChanged() # in case any states added/removed after plugin upgrade
 
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)

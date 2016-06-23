@@ -14,15 +14,15 @@ class SensorAdapter:
 		self.native_device_state_name = native_device_info[1]
 		self.native_device_name = indigo.devices[self.native_device_id].name
 
+		# default
+		self.precision = 1
+
 		if "customConvertedSensor" == self.dev.deviceTypeId:
 			self.delegate = _AffineTransformDelegate(dev, self)
 		elif "tempConvertedSensor" == self.dev.deviceTypeId:
 			self.delegate = _PredefinedDelegate (dev, self)
 		else:
 			self.delegate = _FormulaDelegate(dev, self)
-
-		# default
-		self.precision = 1
 
 
 		self.log.debug("new adapter: %s" % self.name())
