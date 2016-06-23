@@ -8,14 +8,14 @@ SCALE_TYPE = "length"
 
 # Internal canonical representation is meters
 #
-class LengthScale(ScaledMeasurement):
-	def __init__(self, input_scale=None):
-		ScaledMeasurement.__init__(self, input_scale)
+class LengthScale(PredefinedScaledMeasurement):
+	def __init__(self, input_scale=None, precision=1):
+		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
 		print "%s: %s" % (self.suffix(), self.__class__)
 
 class Inches(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# in -> m
 	def _to_canonical(self, x):
@@ -32,8 +32,8 @@ register_scale(SCALE_TYPE, "Inches", "in", Inches)
 
 
 class Feet(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# ft -> m
 	def _to_canonical(self, x):
@@ -50,8 +50,8 @@ register_scale(SCALE_TYPE, "Feet", "ft", Feet)
 
 
 class Yards(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# yd -> m
 	def _to_canonical(self, x):
@@ -71,8 +71,8 @@ register_scale(SCALE_TYPE, "Yards", "yd", Yards)
 # 		LengthScale.__init__(self, input_scale)
 
 class Miles(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# mi -> m
 	def _to_canonical(self, x):
@@ -89,8 +89,8 @@ register_scale(SCALE_TYPE, "Miles", "mi", Miles)
 
 
 class Centimeters(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# cm -> m
 	def _to_canonical(self, x):
@@ -107,8 +107,8 @@ register_scale(SCALE_TYPE, "Centimeters", "cm", Centimeters)
 
 
 class Meters(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# no change
 	def _to_canonical(self, x):
@@ -125,8 +125,8 @@ register_scale(SCALE_TYPE, "Meters", "m", Meters)
 
 
 class Kilometers(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# km -> m
 	def _to_canonical(self, x):
@@ -143,8 +143,8 @@ register_scale(SCALE_TYPE, "Kilometers", "km", Kilometers)
 
 
 class NauticalMiles(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# nmi -> m
 	def _to_canonical(self, x):
@@ -161,8 +161,8 @@ register_scale(SCALE_TYPE, "Nautical Miles", "nmi", NauticalMiles)
 
 
 class Fathoms(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# fm -> m
 	def _to_canonical(self, x):
@@ -179,8 +179,8 @@ register_scale(SCALE_TYPE, "Fathoms", "fm", Fathoms)
 
 
 class Cubits(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# cbt -> m
 	def _to_canonical(self, x):
@@ -197,8 +197,8 @@ register_scale(SCALE_TYPE, "Cubits", "cbt", Cubits)
 
 
 class Hands(LengthScale):
-	def __init__(self, input_scale=None):
-		LengthScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		LengthScale.__init__(self, input_scale, precision=precision)
 
 	# h -> m
 	def _to_canonical(self, x):

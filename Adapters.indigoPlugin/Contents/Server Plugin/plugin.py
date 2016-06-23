@@ -65,12 +65,14 @@ class Plugin(indigo.PluginBase):
 			self.debug = True
 			self.log.setLevel(logging.DEBUG)
 			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.DEBUG)
+			logging.getLogger("pyrescaler").setLevel(logging.DEBUG)
 			self.log.debug("debug logging enabled")
 		else:
 			self.log.debug("debug logging disabled")
 			self.debug=False
 			self.log.setLevel(logging.INFO)
 			logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.INFO)
+			logging.getLogger("pyrescaler").setLevel(logging.INFO)
 
 	def startup(self):
 		self.log.debug(u"startup called")
@@ -82,6 +84,9 @@ class Plugin(indigo.PluginBase):
 
 	def shutdown(self):
 		self.log.debug(u"shutdown called")
+
+	def open_browser_to_python_format_help(self, valuesDict=None, typeId="", targetId=0):
+		self.browserOpen("https://pyformat.info")
 
 	def address_changed(self, valuesDict=None, typeId="", targetId=0):
 		self.log.debug("address_changed")
@@ -100,21 +105,7 @@ class Plugin(indigo.PluginBase):
 
 	def deviceStartComm(self, dev):
 		self.log.debug("deviceStartComm: %s" % dev.pluginProps["address"])
-
-		# added after initial release
-		if (not "scaleType" in dev.pluginProps) or (not "SupportsSensorValue" in dev.pluginProps) or (not "sensorValue" in dev.states):
-			self.log.warning("'rebooting' device")
-			# this seems to be the only thing that will reliably pick up the new
-			#   device type (changed from "custom" to "sensor" since initial release)
-			dev = indigo.device.changeDeviceTypeId(dev, "tempConvertedSensor")
-			propCopy = dev.pluginProps
-			propCopy.update({
-				"SupportsSensorValue": True,
-				"SupportsStatusRequest" : False,
-				"SupportsOnState" : False,
-				"scaleType" : "temperature",
-			});
-			dev.replacePluginPropsOnServer(propCopy)
+		dev.stateListOrDisplayStateIdChanged() # in case any states added/removed after plugin upgrade
 
 		newDevice = SensorAdapter(dev)
 		self.active_adapters.append(newDevice)

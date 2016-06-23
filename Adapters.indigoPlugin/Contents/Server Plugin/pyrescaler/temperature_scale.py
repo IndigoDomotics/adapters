@@ -7,14 +7,14 @@ SCALE_TYPE = "temperature"
 
 # Internal canonical representation is Kelvin
 #
-class TemperatureScale(ScaledMeasurement):
-	def __init__(self, input_scale=None):
-		ScaledMeasurement.__init__(self, input_scale)
+class TemperatureScale(PredefinedScaledMeasurement):
+	def __init__(self, input_scale=None, precision=1):
+		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
 
 
 class Fahrenheit(TemperatureScale):
-	def __init__(self, input_scale=None):
-		TemperatureScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		TemperatureScale.__init__(self, input_scale, precision=precision)
 
 	# F -> K
 	def _to_canonical(self, f_temp):
@@ -31,8 +31,8 @@ register_scale(SCALE_TYPE, "Fahrenheit", "F", Fahrenheit)
 
 
 class Celsius(TemperatureScale):
-	def __init__(self, input_scale=None):
-		TemperatureScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		TemperatureScale.__init__(self, input_scale, precision=precision)
 
 	# C -> K
 	def _to_canonical(self, c_temp):
@@ -49,8 +49,8 @@ register_scale(SCALE_TYPE, "Celsius", "C", Celsius)
 
 
 class Kelvin(TemperatureScale):
-	def __init__(self, input_scale=None):
-		TemperatureScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		TemperatureScale.__init__(self, input_scale, precision=precision)
 
 	def _to_canonical(self, k_temp):
 		# Kelvin is the canonical representation, so nothing to do
@@ -67,8 +67,8 @@ register_scale(SCALE_TYPE, "Kelvin", "K", Kelvin)
 
 
 class Rankine(TemperatureScale):
-	def __init__(self, input_scale=None):
-		TemperatureScale.__init__(self, input_scale)
+	def __init__(self, input_scale=None, precision=1):
+		TemperatureScale.__init__(self, input_scale, precision=precision)
 
 	# R -> K
 	def _to_canonical(self, r_temp):
