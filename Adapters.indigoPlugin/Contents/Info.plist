@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>PluginVersion</key>
-	<string>0.9.9.46</string>
+	<string>0.9.9.48</string>
 	<key>ServerApiVersion</key>
 	<string>1.0</string>
 	<key>IwsApiVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>Scale Adapters</string>
+	<string>Adapters</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.drjason.temp-adapter</string>
 	<key>CFBundleVersion</key>
