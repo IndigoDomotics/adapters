@@ -93,7 +93,3 @@ class ArbitaryFormulaScaledMeasurement(ScaledMeasurement):
 
 	def convert(self, reading):
 		return simple_eval(self.formula, names={"x": float(reading)})
-
-class AffineScaledMeasurement(ArbitaryFormulaScaledMeasurement):
-	def __init__(self, offset=0.0, multiplier=1.0, format_string="{0:.1f}"):
-		ArbitaryFormulaScaledMeasurement.__init__(self, formula="(x * %f) + %f" % (float(multiplier), float(offset)), format_string=format_string)

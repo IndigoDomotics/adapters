@@ -1,6 +1,9 @@
 import logging
 import indigo
-from pyrescaler.pyrescaler import get_converter, AffineScaledMeasurement, ArbitaryFormulaScaledMeasurement
+from pyrescaler.pyrescaler import get_converter, ArbitaryFormulaScaledMeasurement
+
+
+DEFAULT_FORMAT_STRING = "{0:.1f}"
 
 class SensorAdapter:
 	def __init__(self, dev):
@@ -18,11 +21,17 @@ class SensorAdapter:
 		self.precision = 1
 		self.log.debug("initializing adapter of device type '%s'" % (self.dev.deviceTypeId))
 		if "linearConvertedSensor" == self.dev.deviceTypeId:
-			self.delegate = _AffineTransformDelegate(dev, self)
+			self.delegate = _FormulaDelegate(
+				formula="(x * %f) + %f" % (float(dev.pluginProps["multiplier"]), float(dev.pluginProps["offset"])),
+				format_string=dev.pluginProps["format"], 
+				adapter=self)
 		elif "tempConvertedSensor" == self.dev.deviceTypeId:
 			self.delegate = _PredefinedDelegate (dev, self)
 		else:
-			self.delegate = _FormulaDelegate(dev, self)
+			self.delegate = _FormulaDelegate(
+				formula=dev.pluginProps["formula"],
+				format_string=dev.pluginProps["format"], 
+				adapter=self)
 
 
 		self.log.debug("new adapter: %s" % self.name())
@@ -59,21 +68,12 @@ class _PredefinedDelegate:
 	def name(self):
 		return "%s['%s'] %s -> %s" % (self.adapter.native_device_name, self.adapter.native_device_state_name, self.adapter.desired_scale.suffix_native(), self.adapter.desired_scale.suffix())
 
-class _AffineTransformDelegate:
-	def __init__(self, dev, adapter):
-		self.adapter = adapter
-		self.format=dev.pluginProps["format"]
-		adapter.desired_scale = AffineScaledMeasurement(multiplier=dev.pluginProps["multiplier"],
-			offset=dev.pluginProps["offset"], format_string=self.format)
-
-	def name(self):
-		return "%s['%s'] %s" % (self.adapter.native_device_name, self.adapter.native_device_state_name, self.format)
-
 class _FormulaDelegate:
-	def __init__(self, dev, adapter):
+	def __init__(self, formula="x", format_string=DEFAULT_FORMAT_STRING, adapter=None):
 		self.adapter = adapter
-		self.format=dev.pluginProps["format"]
-		adapter.desired_scale = ArbitaryFormulaScaledMeasurement(formula=dev.pluginProps["formula"], format_string=self.format)
+		self.formula = formula
+		self.format_string=format_string
+		adapter.desired_scale = ArbitaryFormulaScaledMeasurement(self.formula, self.format_string)
 
 	def name(self):
-		return "%s['%s'] %s" % (self.adapter.native_device_name, self.adapter.native_device_state_name, self.format)
+		return "%s['%s'] %s" % (self.adapter.native_device_name, self.adapter.native_device_state_name, self.format_string)
