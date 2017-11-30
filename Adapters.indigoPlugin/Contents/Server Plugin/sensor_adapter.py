@@ -16,8 +16,8 @@ class SensorAdapter:
 
 		# default
 		self.precision = 1
-
-		if "customConvertedSensor" == self.dev.deviceTypeId:
+		self.log.debug("initializing adapter of device type '%s'" % (self.dev.deviceTypeId))
+		if "linearConvertedSensor" == self.dev.deviceTypeId:
 			self.delegate = _AffineTransformDelegate(dev, self)
 		elif "tempConvertedSensor" == self.dev.deviceTypeId:
 			self.delegate = _PredefinedDelegate (dev, self)
