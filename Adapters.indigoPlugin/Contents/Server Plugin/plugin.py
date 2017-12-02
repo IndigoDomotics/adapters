@@ -3,10 +3,9 @@
 
 import indigo
 import indigo_logging_handler
-from sensor_adapter import SensorAdapter
+from sensor_adapter import SensorAdapter, get_scale_options
 import logging
 import re
-from pyrescaler.pyrescaler import *
 
 DEBUGGING_ENABLED_MAP = {
 	"y" : True,

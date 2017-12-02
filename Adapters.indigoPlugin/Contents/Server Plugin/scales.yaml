@@ -1,0 +1,23 @@
+temperature: # canonical representation in Kelvin
+  - { name: "Fahrenheit",     to_c: "(459.67 + x) * 5 / 9",   from_c: "(1.8 * x) - 459.67",   suffix: "°F",   key: "F" }
+  - { name: "Celsius",        to_c: "x + 273.15",             from_c: "x - 273.15",           suffix: "°C",   key: "C" }
+  - { name: "Kelvin",         to_c: "x",                      from_c: "x",                    suffix: "K",    key: "K" }
+  - { name: "Rankine",        to_c: "x * 5 / 9",              from_c: "1.8 * x",              suffix: "°Ra",  key: "R" }
+  
+power: # canonical representation in Watts
+  - { name: "kiloWatts",      to_c: "x * 1000",               from_c: "x / 1000",             suffix: "kW",   key: "kW" }
+  - { name: "Watts",          to_c: "x",                      from_c: "x",                    suffix: "W",    key: "W"  }
+  - { name: "Horsepower",     to_c: "x * 745.69987158227",    from_c: "x / 745.69987158227",  suffix: "hp",   key: "hp" }
+
+length:  # canonical representation in meters
+  - { name: "inches",         to_c: "x * 0.0254",             from_c: "x / 0.0254",           suffix: "in",   key: "in"  }
+  - { name: "feet",           to_c: "x * 0.3048",             from_c: "x / 0.3048",           suffix: "ft",   key: "ft"  }
+  - { name: "yards",          to_c: "x / 1.0936",             from_c: "x * 1.0936",           suffix: "yd",   key: "yd"  }
+  - { name: "miles",          to_c: "x * 1609.34",            from_c: "x / 1609.34",          suffix: "mi",   key: "mi"  }
+  - { name: "centimeters",    to_c: "x / 100",                from_c: "x * 100",              suffix: "cm",   key: "cm"  }
+  - { name: "meters",         to_c: "x",                      from_c: "x",                    suffix: "m",    key: "m"   }
+  - { name: "kilometers",     to_c: "x * 1000",               from_c: "x / 1000",             suffix: "km",   key: "km"  }
+  - { name: "nautical miles", to_c: "x * 1852",               from_c: "x / 1852",             suffix: "nmi",  key: "nmi" }
+  - { name: "fathoms",        to_c: "x * 1.8288",             from_c: "x / 1.8288",           suffix: "fm",   key: "fm"  }
+  - { name: "cubits",         to_c: "x / 2.18723",            from_c: "x * 2.18723",          suffix: "cbt",  key: "cbt" }
+  - { name: "hands",          to_c: "x / 9.84252",            from_c: "x * 9.84252",          suffix: "h",    key: "h"   }
