@@ -1,7 +1,6 @@
 import logging
-import sys
-sys.path.insert(0, "../")
-from simpleeval import simple_eval
+
+from ..simpleeval import simple_eval
 
 FORMAT_STRING = "{0:.1f}"
 
@@ -18,16 +17,17 @@ def _decode_scale_name(scale_type, key, precision=1):
 
 
 def get_scale_options(scale_type=None):
-	return [
+	foo = [
 		(a[0], a[2])
 		for k in _all_scales.keys()
-			if (scale_type == None) or (scale_type == k)
+		if scale_type is None or (scale_type == k)
 		for a in _all_scales[k]
 	]
+	return foo
 
 
 def register_scale(scale_type, scale_name, scale_key, scale_class):
-	if not scale_type in _all_scales:
+	if scale_type not in _all_scales:
 		_all_scales[scale_type] = []
 	_log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
 	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
@@ -52,7 +52,7 @@ class PredefinedScaledMeasurement(ScaledMeasurement):
 	def __init__(self, i_s=None, precision=1):
 		ScaledMeasurement.__init__(self)
 		self.precision = precision
-		if (i_s):
+		if i_s:
 			self.input_scale = i_s
 		else:
 			self.input_scale = self
@@ -80,10 +80,6 @@ class PredefinedScaledMeasurement(ScaledMeasurement):
 	def suffix_native(self):
 		return self.input_scale.suffix()
 
-
-# import temperature_scale
-# import length_scale
-# import power_scale
 
 class AffineScaledMeasurement(ScaledMeasurement):
 	def __init__(self, offset=0.0, multiplier=1.0, format_string="{0:.1f}"):

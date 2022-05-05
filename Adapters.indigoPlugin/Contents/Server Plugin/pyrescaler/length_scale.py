@@ -5,12 +5,13 @@ from pyrescaler import *
 
 SCALE_TYPE = "length"
 
+
 # Internal canonical representation is meters
-#
 class LengthScale(PredefinedScaledMeasurement):
 	def __init__(self, input_scale=None, precision=1):
 		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
 		print("%s: %s" % (self.suffix(), self.__class__))
+
 
 class Inches(LengthScale):
 	def __init__(self, input_scale=None, precision=1):
@@ -26,6 +27,7 @@ class Inches(LengthScale):
 
 	def suffix(self):
 		return u"in"
+
 
 register_scale(SCALE_TYPE, "Inches", "in", Inches)
 
@@ -45,6 +47,7 @@ class Feet(LengthScale):
 	def suffix(self):
 		return u"ft"
 
+
 register_scale(SCALE_TYPE, "Feet", "ft", Feet)
 
 
@@ -63,11 +66,13 @@ class Yards(LengthScale):
 	def suffix(self):
 		return u"yd"
 
+
 register_scale(SCALE_TYPE, "Yards", "yd", Yards)
 
 # class Furlongs(LengthScale):
 # 	def __init__(self, input_scale=None):
 # 		LengthScale.__init__(self, input_scale)
+
 
 class Miles(LengthScale):
 	def __init__(self, input_scale=None, precision=1):
@@ -83,6 +88,7 @@ class Miles(LengthScale):
 
 	def suffix(self):
 		return u"mi"
+
 
 register_scale(SCALE_TYPE, "Miles", "mi", Miles)
 
@@ -102,6 +108,7 @@ class Centimeters(LengthScale):
 	def suffix(self):
 		return u"cm"
 
+
 register_scale(SCALE_TYPE, "Centimeters", "cm", Centimeters)
 
 
@@ -119,6 +126,7 @@ class Meters(LengthScale):
 
 	def suffix(self):
 		return u"m"
+
 
 register_scale(SCALE_TYPE, "Meters", "m", Meters)
 
@@ -138,6 +146,7 @@ class Kilometers(LengthScale):
 	def suffix(self):
 		return u"km"
 
+
 register_scale(SCALE_TYPE, "Kilometers", "km", Kilometers)
 
 
@@ -155,6 +164,7 @@ class NauticalMiles(LengthScale):
 
 	def suffix(self):
 		return u"nmi"
+
 
 register_scale(SCALE_TYPE, "Nautical Miles", "nmi", NauticalMiles)
 
@@ -174,6 +184,7 @@ class Fathoms(LengthScale):
 	def suffix(self):
 		return u"fm"
 
+
 register_scale(SCALE_TYPE, "Fathoms", "fm", Fathoms)
 
 
@@ -192,6 +203,7 @@ class Cubits(LengthScale):
 	def suffix(self):
 		return u"cbt"
 
+
 register_scale(SCALE_TYPE, "Cubits", "cbt", Cubits)
 
 
@@ -209,6 +221,7 @@ class Hands(LengthScale):
 
 	def suffix(self):
 		return u"h"
+
 
 register_scale(SCALE_TYPE, "Hands", "h", Hands)
 

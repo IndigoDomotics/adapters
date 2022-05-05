@@ -5,12 +5,13 @@ from pyrescaler import *
 
 SCALE_TYPE = "power"
 
+
 # Internal canonical representation is watts
-#
 class PowerScale(PredefinedScaledMeasurement):
 	def __init__(self, input_scale=None, precision=1):
 		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
 		print("%s: %s" % (self.suffix(), self.__class__))
+
 
 class Watts(PowerScale):
 	def __init__(self, input_scale=None, precision=1):
@@ -26,6 +27,7 @@ class Watts(PowerScale):
 
 	def suffix(self):
 		return u"W"
+
 
 register_scale(SCALE_TYPE, "Watts", "W", Watts)
 
@@ -63,5 +65,6 @@ class Horsepower(PowerScale):
 
 	def suffix(self):
 		return u"hp"
+
 
 register_scale(SCALE_TYPE, "Horsepower", "hp", Horsepower)

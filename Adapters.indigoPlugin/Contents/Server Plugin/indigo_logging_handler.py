@@ -1,8 +1,16 @@
-import indigo  # noqa
+# noqa pylint: disable=too-many-lines, line-too-long, invalid-name, unused-argument, redefined-builtin, broad-except, fixme
+"""
+Docstring Placeholder
+"""
+
 import logging
+import indigo  # noqa
 
 
 class IndigoLoggingHandler(logging.Handler):
+    """
+    Docstring Placeholder
+    """
 
     def __init__(self, p):
         logging.Handler.__init__(self)
