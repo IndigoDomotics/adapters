@@ -1,13 +1,13 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+import logging
+import sys
+sys.path.insert(0, "../")
+from simpleeval import simple_eval
 
 FORMAT_STRING = "{0:.1f}"
 
-import logging
-from simpleeval import simple_eval
-
 _all_scales = {}
 _log = logging.getLogger('pyrescaler')
+
 
 def _decode_scale_name(scale_type, key, precision=1):
 	return [
@@ -15,6 +15,7 @@ def _decode_scale_name(scale_type, key, precision=1):
 		for a in _all_scales[scale_type]
 		if a[0] == key
 	][0]
+
 
 def get_scale_options(scale_type=None):
 	return [
@@ -24,15 +25,16 @@ def get_scale_options(scale_type=None):
 		for a in _all_scales[k]
 	]
 
+
 def register_scale(scale_type, scale_name, scale_key, scale_class):
 	if not scale_type in _all_scales:
 		_all_scales[scale_type] = []
 	_log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
 	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
 
+
 def get_converter(scale_type, native_scale_key, desired_scale_key, precision=1):
 	return _decode_scale_name(scale_type, desired_scale_key, precision)._with_input_scale(_decode_scale_name(scale_type, native_scale_key))
-
 
 
 class ScaledMeasurement:
@@ -44,6 +46,7 @@ class ScaledMeasurement:
 
 	def convert(self, reading):
 		pass
+
 
 class PredefinedScaledMeasurement(ScaledMeasurement):
 	def __init__(self, i_s=None, precision=1):
@@ -78,9 +81,9 @@ class PredefinedScaledMeasurement(ScaledMeasurement):
 		return self.input_scale.suffix()
 
 
-import temperature_scale
-import length_scale
-import power_scale
+# import temperature_scale
+# import length_scale
+# import power_scale
 
 class AffineScaledMeasurement(ScaledMeasurement):
 	def __init__(self, offset=0.0, multiplier=1.0, format_string="{0:.1f}"):
@@ -93,6 +96,7 @@ class AffineScaledMeasurement(ScaledMeasurement):
 
 	def convert(self, reading):
 		return (float(reading) * float(self.multiplier)) + float(self.offset)
+
 
 class ArbitaryFormulaScaledMeasurement(ScaledMeasurement):
 	def __init__(self, formula="x", format_string="{0:.1f}"):

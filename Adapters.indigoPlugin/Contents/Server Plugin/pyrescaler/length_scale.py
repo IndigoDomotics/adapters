@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+# noqa pylint: disable=too-many-lines, line-too-long, invalid-name, unused-argument, redefined-builtin, broad-except, fixme
 
 from pyrescaler import *
 
@@ -11,7 +10,7 @@ SCALE_TYPE = "length"
 class LengthScale(PredefinedScaledMeasurement):
 	def __init__(self, input_scale=None, precision=1):
 		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
-		print "%s: %s" % (self.suffix(), self.__class__)
+		print("%s: %s" % (self.suffix(), self.__class__))
 
 class Inches(LengthScale):
 	def __init__(self, input_scale=None, precision=1):
