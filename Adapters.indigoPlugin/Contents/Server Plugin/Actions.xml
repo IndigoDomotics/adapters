@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- By default the thermostat type devices will inherit all ThermostatAction actions, which will be dispatched to
+<!-- By default, the thermostat type devices will inherit all ThermostatAction actions, which will be dispatched to
 	 the actionControlThermostat() method defined in plugin.py.
 
 	 Additional custom actions can also be defined here. The example below defines a custom action to modify the

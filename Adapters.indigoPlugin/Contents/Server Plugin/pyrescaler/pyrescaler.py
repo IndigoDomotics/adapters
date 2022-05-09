@@ -1,6 +1,6 @@
 import logging
+from .simpleeval import simple_eval
 
-from ..simpleeval import simple_eval
 
 FORMAT_STRING = "{0:.1f}"
 

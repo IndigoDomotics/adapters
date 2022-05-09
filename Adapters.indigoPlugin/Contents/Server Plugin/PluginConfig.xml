@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <PluginConfig>
-	<SupportURL>http://www.yourdomain.com/plugin/config.html</SupportURL>
+	<SupportURL>https://www.yourdomain.com/plugin/config.html</SupportURL>
 
 	<Field id ="debuggingEnabled" type="menu">
 		<Label>Debug logging enabled:</Label>

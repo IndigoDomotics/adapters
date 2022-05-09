@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -------------------------------------
 Initial idea copied from J.F. Sebastian on Stack Overflow
-( http://stackoverflow.com/a/9558001/1973500 ) with
+( https://stackoverflow.com/a/9558001/1973500 ) with
 modifications and many improvements.
 -------------------------------------
 Contributors:
@@ -92,7 +92,7 @@ DISALLOW_PREFIXES = ["_", "func_"]
 DISALLOW_METHODS = ["format", "format_map", "mro"]
 
 # Disallow functions:
-# This, strictly speaking, is not necessary.  These /should/ never be accessable anyway,
+# This, strictly speaking, is not necessary.  These /should/ never be accessible anyway,
 # if DISALLOW_PREFIXES and DISALLOW_METHODS are all right.  This is here to try and help
 # people not be stupid.  Allowing these functions opens up all sorts of holes - if any of
 # their functionality is required, then please wrap them up in a safe container.  And think
@@ -205,9 +205,9 @@ def safe_mult(a, b):  # pylint: disable=invalid-name
     """limit the number of times an iterable can be repeated..."""
 
     if hasattr(a, "__len__") and b * len(a) > MAX_STRING_LENGTH:
-        raise IterableTooLong("Sorry, I will not evalute something that long.")
+        raise IterableTooLong("Sorry, I will not evaluate something that long.")
     if hasattr(b, "__len__") and a * len(b) > MAX_STRING_LENGTH:
-        raise IterableTooLong("Sorry, I will not evalute something that long.")
+        raise IterableTooLong("Sorry, I will not evaluate something that long.")
 
     return a * b
 
@@ -357,7 +357,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
         self.nodes = None
 
     def eval(self, expr):
-        """evaluate an expresssion, using the operators, functions and
+        """evaluate an expression, using the operators, functions and
         names previously set up."""
 
         # set a copy of the expression aside, so we can give nice errors...
@@ -479,7 +479,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
         try:
             # This happens at least for slicing
             # This is a safe thing to do because it is impossible
-            # that there is a true exression assigning to none
+            # that there is a true expression assigning to none
             # (the compiler rejects it, so you can't even
             # pass that to ast.parse)
             if hasattr(self.names, "__getitem__"):
@@ -657,6 +657,6 @@ class EvalWithCompoundTypes(SimpleEval):
 
 
 def simple_eval(expr, operators=None, functions=None, names=None):
-    """Simply evaluate an expresssion"""
+    """ Simply evaluate an expression """
     s = SimpleEval(operators=operators, functions=functions, names=names)
     return s.eval(expr)
