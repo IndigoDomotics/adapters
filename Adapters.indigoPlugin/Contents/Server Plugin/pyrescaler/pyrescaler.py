@@ -17,12 +17,13 @@ def _decode_scale_name(scale_type, key, precision=1):
 
 
 def get_scale_options(scale_type=None):
-	foo = [
-		(a[0], a[2])
-		for k in _all_scales.keys()
-		if scale_type is None or (scale_type == k)
-		for a in _all_scales[k]
-	]
+	foo = []
+	# foo = [
+	# 	(a[0], a[2])
+	# 	for k in _all_scales.keys()
+	# 	if scale_type is None or (scale_type == k)
+	# 	for a in _all_scales[k]
+	# ]
 	return foo
 
 
