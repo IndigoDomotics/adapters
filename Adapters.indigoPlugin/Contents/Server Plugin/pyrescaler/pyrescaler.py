@@ -1,5 +1,7 @@
 import logging
-from .simpleeval import simple_eval
+import sys
+sys.path.append("Adapters.indigoPlugin/Contents/Server Plugin")
+from simpleeval import simple_eval
 
 
 FORMAT_STRING = "{0:.1f}"
@@ -9,12 +11,16 @@ _log = logging.getLogger('pyrescaler')
 
 
 def _decode_scale_name(scale_type, key, precision=1):
-	return [
-		a[1](precision=precision)
-		for a in _all_scales[scale_type]
-		if a[0] == key
-	][0]
-
+	# return [
+	# 	a[1](precision=precision)
+	# 	for a in _all_scales[scale_type]
+	# 	if a[0] == key
+	# ][0]
+	bar = []
+	for a in _all_scales[scale_type]:
+		if a[0] == key:
+			bar.append(a[1](precision=precision))
+	return bar[0]
 
 def get_scale_options(scale_type=None):
 	foo = []
@@ -24,6 +30,12 @@ def get_scale_options(scale_type=None):
 	# 	if scale_type is None or (scale_type == k)
 	# 	for a in _all_scales[k]
 	# ]
+	# scale_type = 'temperature', 'power', or 'length'
+	_log.debug(f"get_scale_options._all_scales = {_all_scales}")
+	for k in _all_scales.keys():
+		if scale_type is None or (scale_type == k):
+			for a in _all_scales[k]:
+				foo.append((a[0], a[2]))
 	return foo
 
 
@@ -32,6 +44,7 @@ def register_scale(scale_type, scale_name, scale_key, scale_class):
 		_all_scales[scale_type] = []
 	_log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
 	_all_scales[scale_type].append((scale_key, scale_class, scale_name))
+	_log.debug(f"register_scale._all_scales = {_all_scales}")
 
 
 def get_converter(scale_type, native_scale_key, desired_scale_key, precision=1):
