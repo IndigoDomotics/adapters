@@ -48,7 +48,8 @@ class Inches(LengthScale):
         """
         return float(val) / 0.0254
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -85,7 +86,8 @@ class Feet(LengthScale):
         """
         return float(val) * 3.2808
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -122,7 +124,8 @@ class Yards(LengthScale):
         """
         return float(val) * 1.0936
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -163,7 +166,8 @@ class Miles(LengthScale):
         """
         return float(val) / 1609.34
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -200,7 +204,8 @@ class Centimeters(LengthScale):
         """
         return float(val) * 100
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -237,7 +242,8 @@ class Meters(LengthScale):
         """
         return float(val)
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -274,7 +280,8 @@ class Kilometers(LengthScale):
         """
         return float(val) / 1000
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -311,7 +318,8 @@ class NauticalMiles(LengthScale):
         """
         return float(val) / 1852
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -348,7 +356,8 @@ class Fathoms(LengthScale):
         """
         return float(val) / 1.8288
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -385,7 +394,8 @@ class Cubits(LengthScale):
         """
         return float(val) * 2.18723
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -422,7 +432,8 @@ class Hands(LengthScale):
         """
         return float(val) * 9.84252
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """

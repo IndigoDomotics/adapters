@@ -43,6 +43,7 @@ class Plugin(indigo.PluginBase):
 
         self.active_adapters = []
         self.adapters_for_device = {}
+        self.debug = DEBUGGING_ENABLED_MAP[self.plugin_prefs['debuggingEnabled']]
         log_handler = indigo_logging_handler.IndigoLoggingHandler(self)
 
         self.log = logging.getLogger('indigo.temp-converter.plugin')
@@ -141,16 +142,16 @@ class Plugin(indigo.PluginBase):
         self.log.debug("get_scales")
         if "scaleType" not in values_dict:
             return []
-        self.log.debug("getting scale options for scale type: %s" % values_dict["scaleType"])
+        self.log.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
         opts = get_scale_options(scale_type=values_dict["scaleType"])
-        self.log.debug("scale options: %s" % opts)
+        self.log.debug(f"scale options: {opts}")
         return opts
 
     def device_start_comm(self, dev):
         """
         Docstring placeholder
         """
-        self.log.debug("device_start_comm: %s" % dev.pluginProps["address"])
+        self.log.debug(f"device_start_comm: {dev.pluginProps['address']}")
         # in case any states added/removed after plugin upgrade
         dev.stateListOrDisplayStateIdChanged()
 
@@ -162,7 +163,7 @@ class Plugin(indigo.PluginBase):
 
         self.adapters_for_device[new_device.native_device_id].append(new_device)
 
-        self.log.debug("added adapter: %s" % new_device.name())
+        self.log.debug(f"added adapter: {new_device.name()}")
 
     def device_stop_comm(self, dev):
         """

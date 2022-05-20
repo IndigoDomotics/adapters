@@ -42,7 +42,7 @@ def register_scale(scale_type, scale_name, scale_key, scale_class):
     """
     if scale_type not in _all_scales:
         _all_scales[scale_type] = []
-    _log.debug("registered '%s' scale '%s' (%s)" % (scale_type, scale_name, scale_key))
+    _log.debug(f"registered '{scale_type}' scale '{scale_name}' ({scale_key})")
     _all_scales[scale_type].append((scale_key, scale_class, scale_name))
 
 

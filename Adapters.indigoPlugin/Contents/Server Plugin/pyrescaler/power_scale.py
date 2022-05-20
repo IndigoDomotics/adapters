@@ -51,7 +51,8 @@ class Watts(PowerScale):
         """
         return float(val)
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -88,7 +89,8 @@ class Kilowatts(PowerScale):
         """
         return float(val) / 1000
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -125,7 +127,8 @@ class Horsepower(PowerScale):
         """
         return float(val) / 745.69987158227
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """

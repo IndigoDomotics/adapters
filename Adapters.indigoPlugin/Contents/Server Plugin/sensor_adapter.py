@@ -38,7 +38,7 @@ class SensorAdapter:
         else:
             self.delegate = _FormulaDelegate(dev, self)
 
-        self.log.debug("new adapter: %s" % self.name())
+        self.log.debug(f"new adapter: {self.name()}")
 
         self.go()
 
@@ -61,9 +61,9 @@ class SensorAdapter:
             key="sensorValue",
             value=converted_value,
             decimalPlaces=self.precision,
-            uiValue=converted_txt
+            uiValue=converted_txt.lstrip()
         )
-        self.log.debug("%s: %s" % (self.name(), converted_txt))
+        self.log.debug(f"{self.name()}: {converted_txt}")
 
 
 class _PredefinedDelegate:
@@ -117,7 +117,8 @@ class _AffineTransformDelegate:
         adapter.desired_scale = (
             AffineScaledMeasurement(multiplier=dev.pluginProps["multiplier"],
                                     offset=dev.pluginProps["offset"],
-                                    format_string=self.format)
+                                    format_string=self.format
+                                    )
         )
 
     def name(self):

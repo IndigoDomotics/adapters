@@ -49,7 +49,8 @@ class Fahrenheit(TemperatureScale):
         """
         return (1.8 * float(k_temp)) - 459.67
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -86,7 +87,8 @@ class Celsius(TemperatureScale):
         """
         return float(k_temp) - 273.15
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -123,7 +125,8 @@ class Kelvin(TemperatureScale):
         # Kelvin is the canonical representation, so nothing to do
         return float(k_temp)
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
@@ -160,7 +163,8 @@ class Rankine(TemperatureScale):
         """
         return 1.8 * float(k_temp)
 
-    def suffix(self):
+    @staticmethod
+    def suffix():
         """
         Docstring placeholder
         """
