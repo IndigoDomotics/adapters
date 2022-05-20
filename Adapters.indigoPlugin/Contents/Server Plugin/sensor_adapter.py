@@ -61,7 +61,7 @@ class SensorAdapter:
             key="sensorValue",
             value=converted_value,
             decimalPlaces=self.precision,
-            uiValue=converted_txt.lstrip()
+            uiValue=converted_txt
         )
         self.log.debug(f"{self.name()}: {converted_txt}")
 

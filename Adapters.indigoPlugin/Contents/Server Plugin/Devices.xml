@@ -46,7 +46,7 @@
 
 	</Device>
 
-	<Device type="sensor" id="linearConvertedSensor">
+	<Device type="sensor" id="customConvertedSensor">
 
 		<Name>Custom Linear Scale Adapter</Name>
 
@@ -76,7 +76,7 @@
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
 			<Field id="openFormatHelp" type="button">
-		    <Label/>
+		    <Label></Label>
 		    <Title>Formatting Help</Title>
 		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 		  </Field>
@@ -128,7 +128,7 @@
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
 			<Field id="openFormatHelp" type="button">
-				<Label/>
+				<Label></Label>
 				<Title>Formatting Help</Title>
 				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 			</Field>
@@ -174,7 +174,7 @@
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
 			<Field id="openFormatHelp" type="button">
-				<Label/>
+				<Label></Label>
 				<Title>Formatting Help</Title>
 				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 			</Field>
@@ -191,4 +191,6 @@
 		<UiDisplayStateId>sensorValue</UiDisplayStateId>
 
 	</Device>
+
+
 </Devices>
