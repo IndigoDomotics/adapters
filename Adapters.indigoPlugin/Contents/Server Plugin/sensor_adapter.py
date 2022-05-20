@@ -1,27 +1,24 @@
-# noqa pylint: disable=too-many-lines, line-too-long, invalid-name, unused-argument, redefined-builtin, broad-except, fixme
 """
-Docstring Placeholder
+Docstring placeholder
 """
-
 import logging
 import indigo  # noqa
 from pyrescaler.pyrescaler import (get_converter,
                                    AffineScaledMeasurement,
-                                   ArbitaryFormulaScaledMeasurement
+                                   ArbitraryFormulaScaledMeasurement
                                    )
 
 
 class SensorAdapter:
     """
-    Docstring Placeholder
+    Docstring placeholder
     """
 
     def __init__(self, dev):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
-        self.log = logging.getLogger("indigo.temp-converter.plugin")
+        self.log = logging.getLogger('indigo.temp-converter.plugin')
 
         self.dev = dev
         self.address = dev.pluginProps["address"]
@@ -41,23 +38,20 @@ class SensorAdapter:
         else:
             self.delegate = _FormulaDelegate(dev, self)
 
-        # self.log.debug(f"new adapter: {self.name()}")
-        self.log.debug("new adapter: %s", self.name())
+        self.log.debug("new adapter: %s" % self.name())
 
         self.go()
 
     def name(self):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         return self.delegate.name()
 
     def go(self):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
 
         converted_txt = self.desired_scale.format(native_value)
@@ -65,21 +59,22 @@ class SensorAdapter:
 
         self.dev.updateStateOnServer(
             key="sensorValue",
-            value=converted_value, decimalPlaces=self.precision, uiValue=converted_txt
+            value=converted_value,
+            decimalPlaces=self.precision,
+            uiValue=converted_txt
         )
-        self.log.debug("%s: %s", self.name(), converted_txt)
+        self.log.debug("%s: %s" % (self.name(), converted_txt))
 
 
 class _PredefinedDelegate:
     """
-    Docstring Placeholder
+    Docstring placeholder
     """
 
     def __init__(self, dev, adapter):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         self.adapter = adapter
         self.scale_type = dev.pluginProps["scaleType"]
 
@@ -90,46 +85,45 @@ class _PredefinedDelegate:
             # set icon to 'temperature sensor'
             dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
 
-        self.adapter.desired_scale = get_converter(
-            self.scale_type, dev.pluginProps["nativeScale"],
-            dev.pluginProps["desiredScale"], precision=self.adapter.precision
+        self.adapter.desired_scale = (
+            get_converter(self.scale_type,
+                          dev.pluginProps["nativeScale"],
+                          dev.pluginProps["desiredScale"],
+                          precision=self.adapter.precision
+                          )
         )
 
     def name(self):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         return (
             f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] "
-            f"{self.adapter.desired_scale.suffix_native()} -> "
-            f"{self.adapter.desired_scale.suffix()}"
+            f"{self.adapter.desired_scale.suffix_native()} -> {self.adapter.desired_scale.suffix()}"
         )
 
 
 class _AffineTransformDelegate:
     """
-    Docstring Placeholder
+    Docstring placeholder
     """
 
     def __init__(self, dev, adapter):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         self.adapter = adapter
         self.format = dev.pluginProps["format"]
-        adapter.desired_scale = AffineScaledMeasurement(
-            multiplier=dev.pluginProps["multiplier"],
-            offset=dev.pluginProps["offset"],
-            format_string=self.format
+        adapter.desired_scale = (
+            AffineScaledMeasurement(multiplier=dev.pluginProps["multiplier"],
+                                    offset=dev.pluginProps["offset"],
+                                    format_string=self.format)
         )
 
     def name(self):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         return (
             f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] "
             f"{self.format}"
@@ -138,25 +132,25 @@ class _AffineTransformDelegate:
 
 class _FormulaDelegate:
     """
-    Docstring Placeholder
+    Docstring placeholder
     """
 
     def __init__(self, dev, adapter):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         self.adapter = adapter
         self.format = dev.pluginProps["format"]
-        adapter.desired_scale = ArbitaryFormulaScaledMeasurement(
-            formula=dev.pluginProps["formula"], format_string=self.format
+        adapter.desired_scale = (
+            ArbitraryFormulaScaledMeasurement(
+                formula=dev.pluginProps["formula"], format_string=self.format
+            )
         )
 
     def name(self):
         """
-        Docstring Placeholder
+        Docstring placeholder
         """
-
         return (
             f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] "
             f"{self.format}"

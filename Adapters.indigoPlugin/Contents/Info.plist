@@ -8,8 +8,6 @@
 	<string>3.0</string>
 	<key>IwsApiVersion</key>
 	<string>1.0.0</string>
-	<key>LoadPriority</key>
-	<integer>105</integer>
 	<key>CFBundleDisplayName</key>
 	<string>Adapters</string>
 	<key>CFBundleIdentifier</key>
@@ -20,7 +18,7 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>https://forums.indigodomo.com%2Fviewtopic.php%3Ff%3D134%26t%3D15793</string>
+			<string>https://www.indigodomo.com/pluginstore/100/</string>
 		</dict>
 	</array>
 </dict>

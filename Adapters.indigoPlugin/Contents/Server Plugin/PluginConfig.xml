@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <PluginConfig>
-	<SupportURL>https://www.yourdomain.com/plugin/config.html</SupportURL>
+	<SupportURL>https://www.indigodomo.com/pluginstore/100/</SupportURL>
 
 	<Field id ="debuggingEnabled" type="menu">
 		<Label>Debug logging enabled:</Label>
-		<List>
-			<Option value="n">no</Option>
-			<Option value="y">yes</Option>
+		<List>s
+			<Option value="n">No</Option>
+			<Option value="y">Yes</Option>
 		</List>
 	</Field>
 	

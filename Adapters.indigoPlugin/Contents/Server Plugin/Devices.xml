@@ -46,7 +46,7 @@
 
 	</Device>
 
-	<Device type="sensor" id="customConvertedSensor"> #linearConvertedSensor
+	<Device type="sensor" id="linearConvertedSensor">
 
 		<Name>Custom Linear Scale Adapter</Name>
 
@@ -191,5 +191,4 @@
 		<UiDisplayStateId>sensorValue</UiDisplayStateId>
 
 	</Device>
-
 </Devices>

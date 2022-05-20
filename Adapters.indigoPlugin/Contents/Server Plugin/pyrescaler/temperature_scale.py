@@ -1,84 +1,170 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Docstring placeholder
+"""
 
-from pyrescaler import *
+from .pyrescaler import *
 
 SCALE_TYPE = "temperature"
 
+
 # Internal canonical representation is Kelvin
-#
 class TemperatureScale(PredefinedScaledMeasurement):
-	def __init__(self, input_scale=None, precision=1):
-		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
+
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
 
 
 class Fahrenheit(TemperatureScale):
-	def __init__(self, input_scale=None, precision=1):
-		TemperatureScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# F -> K
-	def _to_canonical(self, f_temp):
-		return (459.67 + float(f_temp)) * 5 / 9
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        TemperatureScale.__init__(self, input_scale, precision=precision)
 
-	# K -> F
-	def _from_canonical(self, k_temp):
-		return (1.8 * float(k_temp)) - 459.67
+    # F -> K
+    @staticmethod
+    def _to_canonical(f_temp):
+        """
+        Docstring placeholder
+        """
+        return (459.67 + float(f_temp)) * 5 / 9
 
-	def suffix(self):
-		return u"°F"
+    # K -> F
+    @staticmethod
+    def _from_canonical(k_temp):
+        """
+        Docstring placeholder
+        """
+        return (1.8 * float(k_temp)) - 459.67
+
+    def suffix(self):
+        """
+        Docstring placeholder
+        """
+        return "°F"
+
 
 register_scale(SCALE_TYPE, "Fahrenheit", "F", Fahrenheit)
 
 
 class Celsius(TemperatureScale):
-	def __init__(self, input_scale=None, precision=1):
-		TemperatureScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# C -> K
-	def _to_canonical(self, c_temp):
-		return float(c_temp) + 273.15
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        TemperatureScale.__init__(self, input_scale, precision=precision)
 
-	# K -> C
-	def _from_canonical(self, k_temp):
-		return float(k_temp) - 273.15
+    # C -> K
+    @staticmethod
+    def _to_canonical(c_temp):
+        """
+        Docstring placeholder
+        """
+        return float(c_temp) + 273.15
 
-	def suffix(self):
-		return u"°C"
+    # K -> C
+    @staticmethod
+    def _from_canonical(k_temp):
+        """
+        Docstring placeholder
+        """
+        return float(k_temp) - 273.15
+
+    def suffix(self):
+        """
+        Docstring placeholder
+        """
+        return "°C"
+
 
 register_scale(SCALE_TYPE, "Celsius", "C", Celsius)
 
 
 class Kelvin(TemperatureScale):
-	def __init__(self, input_scale=None, precision=1):
-		TemperatureScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	def _to_canonical(self, k_temp):
-		# Kelvin is the canonical representation, so nothing to do
-		return float(k_temp)
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        TemperatureScale.__init__(self, input_scale, precision=precision)
 
-	def _from_canonical(self, k_temp):
-		# Kelvin is the canonical representation, so nothing to do
-		return float(k_temp)
+    @staticmethod
+    def _to_canonical(k_temp):
+        """
+        Docstring placeholder
+        """
+        # Kelvin is the canonical representation, so nothing to do
+        return float(k_temp)
 
-	def suffix(self):
-		return u"K"
+    @staticmethod
+    def _from_canonical(k_temp):
+        """
+        Docstring placeholder
+        """
+        # Kelvin is the canonical representation, so nothing to do
+        return float(k_temp)
+
+    def suffix(self):
+        """
+        Docstring placeholder
+        """
+        return "K"
+
 
 register_scale(SCALE_TYPE, "Kelvin", "K", Kelvin)
 
 
 class Rankine(TemperatureScale):
-	def __init__(self, input_scale=None, precision=1):
-		TemperatureScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# R -> K
-	def _to_canonical(self, r_temp):
-		return float(r_temp) * 5 / 9
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        TemperatureScale.__init__(self, input_scale, precision=precision)
 
-	# K -> R
-	def _from_canonical(self, k_temp):
-		return 1.8 * float(k_temp)
+    # R -> K
+    @staticmethod
+    def _to_canonical(r_temp):
+        """
+        Docstring placeholder
+        """
+        return float(r_temp) * 5 / 9
 
-	def suffix(self):
-		return u"°Ra"
+    # K -> R
+    @staticmethod
+    def _from_canonical(k_temp):
+        """
+        Docstring placeholder
+        """
+        return 1.8 * float(k_temp)
+
+    def suffix(self):
+        """
+        Docstring placeholder
+        """
+        return "°Ra"
+
 
 register_scale(SCALE_TYPE, "Rankine", "R", Rankine)
