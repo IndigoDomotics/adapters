@@ -86,11 +86,12 @@ class _PredefinedDelegate:
             dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
 
         self.adapter.desired_scale = (
-            get_converter(self.scale_type,
-                          dev.pluginProps["nativeScale"],
-                          dev.pluginProps["desiredScale"],
-                          precision=self.adapter.precision
-                          )
+            get_converter(
+                self.scale_type,
+                dev.pluginProps["nativeScale"],
+                dev.pluginProps["desiredScale"],
+                precision=self.adapter.precision
+            )
         )
 
     def name(self):
@@ -115,10 +116,11 @@ class _AffineTransformDelegate:
         self.adapter = adapter
         self.format = dev.pluginProps["format"]
         adapter.desired_scale = (
-            AffineScaledMeasurement(multiplier=dev.pluginProps["multiplier"],
-                                    offset=dev.pluginProps["offset"],
-                                    format_string=self.format
-                                    )
+            AffineScaledMeasurement(
+                multiplier=dev.pluginProps["multiplier"],
+                offset=dev.pluginProps["offset"],
+                format_string=self.format
+            )
         )
 
     def name(self):

@@ -17,23 +17,34 @@ def _decode_scale_name(scale_type, key, precision=1):
     """
     Docstring placeholder
     """
-    return [
-        a[1](precision=precision)
-        for a in _all_scales[scale_type]
-        if a[0] == key
-    ][0]
+    # return [
+    #     a[1](precision=precision)
+    #     for a in _all_scales[scale_type]
+    #     if a[0] == key
+    # ][0]
+    item_list = []
+    for scale in _all_scales[scale_type]:
+        if scale[0] == key:
+            item_list.append(scale[1](precision=precision))
 
+    return item_list[0]
 
 def get_scale_options(scale_type=None):
     """
     Docstring placeholder
     """
-    return [
-        (a[0], a[2])
-        for k in _all_scales.keys()
-        if (scale_type is None) or (scale_type == k)
-        for a in _all_scales[k]
-    ]
+    # return [
+    #     (a[0], a[2])
+    #     for k in _all_scales.keys()
+    #     if (scale_type is None) or (scale_type == k)
+    #     for a in _all_scales[k]
+    # ]
+    option_list = []
+    for key in _all_scales.keys():
+        if (scale_type is None) or (scale_type == key):
+            for scale in _all_scales[key]:
+                option_list.append((scale[0], scale[2]))
+    return option_list
 
 
 def register_scale(scale_type, scale_name, scale_key, scale_class):

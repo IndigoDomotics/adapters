@@ -65,14 +65,28 @@ class Plugin(indigo.PluginBase):
         """
         Docstring placeholder
         """
-        return [(f"{d.id:d}.{sk}", f"{d.name} ({sk}): {f'{float(sv):.1f}'}")
-                for d in indigo.devices
-                # don't include instances of this plugin/device in the list
-                if (not d.pluginId) or (d.pluginId != self.pluginId)
-                for (sk, sv) in d.states.items()
-                # only return devices/states that have a numeric value
-                if _is_number(sv)
-                ]
+        # return [(f"{d.id:d}.{sk}", f"{d.name} ({sk}): {f'{float(sv):.1f}'}")
+        #         for d in indigo.devices
+        #         # don't include instances of this plugin/device in the list
+        #         if (not d.pluginId) or (d.pluginId != self.pluginId)
+        #         for (sk, sv) in d.states.items()
+        #         # only return devices/states that have a numeric value
+        #         if _is_number(sv)
+        #         ]
+        eligible_sensors = []
+        for dev in indigo.devices:
+            # don't include instances of this plugin/device in the list
+            if (not dev.pluginId) or (dev.pluginId != self.pluginId):
+                for (state_key, state_value) in dev.states.items():
+                    # only return devices/states that have a numeric value
+                    if _is_number(state_value):
+                        eligible_sensors.append(
+                            (f"{dev.id:d}.{state_key}",
+                             f"{dev.name} ({state_key}): {f'{float(state_value):.1f}'}"
+                             )
+                        )
+
+        return eligible_sensors
 
     def validate_prefs_config_ui(self, values_dict):
         """
