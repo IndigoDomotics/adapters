@@ -1,13 +1,5 @@
 <?xml version="1.0"?>
 <PluginConfig>
 	<SupportURL>https://www.indigodomo.com/pluginstore/100/</SupportURL>
-
-	<Field id ="debuggingEnabled" type="menu">
-		<Label>Debug logging enabled:</Label>
-		<List>s
-			<Option value="n">No</Option>
-			<Option value="y">Yes</Option>
-		</List>
-	</Field>
-	
+	<Template file="templates/template_debugging.xml"/>
 </PluginConfig>

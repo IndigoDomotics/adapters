@@ -9,16 +9,18 @@ from pyrescaler.pyrescaler import (get_converter,
                                    )
 
 
+# ==============================================================================
 class SensorAdapter:
     """
     Docstring placeholder
     """
 
+    # ==============================================================================
     def __init__(self, dev):
         """
         Docstring placeholder
         """
-        self.log = logging.getLogger('indigo.temp-converter.plugin')
+        self.logging = logging.getLogger('sensor_adapter')
 
         self.dev = dev
         self.address = dev.pluginProps["address"]
@@ -38,16 +40,18 @@ class SensorAdapter:
         else:
             self.delegate = _FormulaDelegate(dev, self)
 
-        self.log.debug(f"new adapter: {self.name()}")
+        self.logging.debug(f"new adapter: {self.name()}")
 
         self.go()
 
+    # ==============================================================================
     def name(self):
         """
         Docstring placeholder
         """
         return self.delegate.name()
 
+    # ==============================================================================
     def go(self):
         """
         Docstring placeholder
@@ -63,14 +67,16 @@ class SensorAdapter:
             decimalPlaces=self.precision,
             uiValue=converted_txt
         )
-        self.log.debug(f"{self.name()}: {converted_txt}")
+        self.logging.debug(f"{self.name()} converted to: {converted_txt}")
 
 
+# ==============================================================================
 class _PredefinedDelegate:
     """
     Docstring placeholder
     """
 
+    # ==============================================================================
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
@@ -94,6 +100,7 @@ class _PredefinedDelegate:
             )
         )
 
+    # ==============================================================================
     def name(self):
         """
         Docstring placeholder
@@ -104,11 +111,13 @@ class _PredefinedDelegate:
         )
 
 
+# ==============================================================================
 class _AffineTransformDelegate:
     """
     Docstring placeholder
     """
 
+    # ==============================================================================
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
@@ -123,6 +132,7 @@ class _AffineTransformDelegate:
             )
         )
 
+    # ==============================================================================
     def name(self):
         """
         Docstring placeholder
@@ -133,11 +143,13 @@ class _AffineTransformDelegate:
         )
 
 
+# ==============================================================================
 class _FormulaDelegate:
     """
     Docstring placeholder
     """
 
+    # ==============================================================================
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
@@ -150,6 +162,7 @@ class _FormulaDelegate:
             )
         )
 
+    # ==============================================================================
     def name(self):
         """
         Docstring placeholder

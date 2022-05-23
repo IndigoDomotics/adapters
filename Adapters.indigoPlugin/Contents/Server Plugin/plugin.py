@@ -5,18 +5,19 @@ Docstring placeholder
 """
 
 import indigo  # noqa
-import indigo_logging_handler
 from sensor_adapter import SensorAdapter
-# import logging
-# import re
 from pyrescaler.pyrescaler import *
+import logging
 
-DEBUGGING_ENABLED_MAP = {
-    "y": True,
-    "n": False
-}
+__author__    = "dustysparkle, DaveL17"
+__copyright__ = "Not used."
+__license__   = "Apache 2.0"
+__build__     = "Not used."
+__title__     = 'Adapters Plugin for Indigo'
+__version__   = '2022.0.2'
 
 
+# ==============================================================================
 def _is_number(s):
     """
     Docstring placeholder
@@ -28,11 +29,13 @@ def _is_number(s):
         return False
 
 
+# ==============================================================================
 class Plugin(indigo.PluginBase):
     """
     Docstring placeholder
     """
 
+    # ==============================================================================
     def __init__(self, plugin_id, plugin_display_name, plugin_version, plugin_prefs):
         """
         Docstring placeholder
@@ -41,38 +44,50 @@ class Plugin(indigo.PluginBase):
             self, plugin_id, plugin_display_name, plugin_version, plugin_prefs
         )
 
-        self.active_adapters = []
+        self.active_adapters     = []
         self.adapters_for_device = {}
-        self.debug = DEBUGGING_ENABLED_MAP[self.plugin_prefs['debuggingEnabled']]
-        log_handler = indigo_logging_handler.IndigoLoggingHandler(self)
 
-        self.log = logging.getLogger('indigo.temp-converter.plugin')
-        self.log.addHandler(log_handler)
-        logging.getLogger('pyrescaler').addHandler(log_handler)
+        # =============================== Debug Logging ================================
+        self.debug_logging()
 
-        # "Subscribe to Changes" from all indigo devices, so we can update our 'converted'
-        # temperature any time the native Temperature changes. Would be nice to only "Subscribe to
-        # Changes" from individual objects, but that's not implemented yet.
+        # "Subscribe to Changes" from all indigo devices, so we can update our 'converted' values
+        # any time the native value changes.
         indigo.devices.subscribeToChanges()
 
+    # ==============================================================================
+    def debug_logging(self):
+
+        # The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top
+        # of other objects. For example, a sensor changes (which would typically be logged by
+        # Indigo or another plugin) so an additional log message from this plugin would be overkill.
+        log_format = '%(asctime)s.%(msecs)03d\t%(levelname)-10s\t%(name)s.%(funcName)-28s %(msg)s'
+        self.plugin_file_handler.setFormatter(
+            logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S')
+        )
+
+        self.debug_level = int(self.pluginPrefs.get('showDebugLevel', "30"))
+        self.indigo_log_handler.setLevel(self.debug_level)
+
+        self.sensor_logger = logging.getLogger("sensor_adapter")  # sensor_adapter.py logger
+        self.sensor_logger.addHandler(self.indigo_log_handler)
+        self.sensor_logger.setLevel(self.debug_level)
+
+        self.pyrescaler_logger = logging.getLogger("pyrescaler")  # pyrescaler.py logger
+        self.pyrescaler_logger.addHandler(self.indigo_log_handler)
+        self.pyrescaler_logger.setLevel(self.debug_level)
+
+    # ==============================================================================
     def __del__(self):
         """
         Docstring placeholder
         """
         indigo.PluginBase.__del__(self)
 
+    # ==============================================================================
     def get_eligible_sensors(self, _filter="", values_dict=None, type_id="", target_id=0):
         """
         Docstring placeholder
         """
-        # return [(f"{d.id:d}.{sk}", f"{d.name} ({sk}): {f'{float(sv):.1f}'}")
-        #         for d in indigo.devices
-        #         # don't include instances of this plugin/device in the list
-        #         if (not d.pluginId) or (d.pluginId != self.pluginId)
-        #         for (sk, sv) in d.states.items()
-        #         # only return devices/states that have a numeric value
-        #         if _is_number(sv)
-        #         ]
         eligible_sensors = []
         for dev in indigo.devices:
             # don't include instances of this plugin/device in the list
@@ -88,84 +103,71 @@ class Plugin(indigo.PluginBase):
 
         return eligible_sensors
 
+    # ==============================================================================
     def validate_prefs_config_ui(self, values_dict):
         """
         Docstring placeholder
         """
-        self.log.debug("validatePrefsConfigGui")
-        self.update_logging(
-            bool(values_dict['debuggingEnabled'] and "y" == values_dict['debuggingEnabled'])
-        )
+        self.debug_level = int(values_dict['showDebugLevel'])
+        self.indigo_log_handler.setLevel(self.debug_level)
+        self.sensor_logger.setLevel(self.debug_level)
+        self.pyrescaler_logger.setLevel(self.debug_level)
         return True
 
-    def update_logging(self, is_debug):
-        """
-        Docstring placeholder
-        """
-        if is_debug:
-            self.debug = True
-            self.log.setLevel(logging.DEBUG)
-            logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.DEBUG)
-            logging.getLogger("pyrescaler").setLevel(logging.DEBUG)
-            self.log.debug("debug logging enabled")
-        else:
-            self.log.debug("debug logging disabled")
-            self.debug = False
-            self.log.setLevel(logging.INFO)
-            logging.getLogger("indigo.temp-converter.plugin").setLevel(logging.INFO)
-            logging.getLogger("pyrescaler").setLevel(logging.INFO)
-
+    # ==============================================================================
     def startup(self):
         """
         Docstring placeholder
         """
-        self.log.debug("startup called")
-        if "debuggingEnabled" not in self.pluginPrefs:
-            self.pluginPrefs["debuggingEnabled"] = "n"
+        self.logger.debug("startup called")
 
-        self.update_logging(DEBUGGING_ENABLED_MAP[self.pluginPrefs["debuggingEnabled"]])
-
+    # ==============================================================================
     def shutdown(self):
         """
         Docstring placeholder
         """
-        self.log.debug("shutdown called")
+        self.logger.debug("shutdown called")
 
+    # ==============================================================================
     def open_browser_to_python_format_help(self, values_dict=None, type_id="", target_id=0):
         """
         Docstring placeholder
         """
         self.browserOpen("https://pyformat.info")
 
+    # ==============================================================================
     def address_changed(self, values_dict=None, type_id="", target_id=0):
         """
         Docstring placeholder
         """
-        self.log.debug("address_changed")
+        self.logger.debug("address_changed")
 
+    # ==============================================================================
     def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
         """
         Docstring placeholder
         """
-        self.log.debug("scale_type_changed")
+        self.logger.debug("scale_type_changed")
 
+    # ==============================================================================
     def get_scales(self, _filter="", values_dict=None, type_id="", target_id=0):
         """
         Docstring placeholder
         """
-        self.log.debug("get_scales")
+        self.logger.debug("get_scales")
         if "scaleType" not in values_dict:
             return []
-        self.log.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
+        self.logger.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
         opts = get_scale_options(scale_type=values_dict["scaleType"])
-        self.log.debug(f"scale options: {opts}")
+        self.logger.debug(f"scale options: {opts}")
         return opts
 
+    # ==============================================================================
     def device_start_comm(self, dev):
         """
         Docstring placeholder
         """
-        self.log.debug(f"device_start_comm: {dev.pluginProps['address']}")
+        self.logger.debug(f"device_start_comm: {dev.pluginProps['address']}")
         # in case any states added/removed after plugin upgrade
         dev.stateListOrDisplayStateIdChanged()
 
@@ -177,8 +179,9 @@ class Plugin(indigo.PluginBase):
 
         self.adapters_for_device[new_device.native_device_id].append(new_device)
 
-        self.log.debug(f"added adapter: {new_device.name()}")
+        self.logger.debug(f"added adapter: {new_device.name()}")
 
+    # ==============================================================================
     def device_stop_comm(self, dev):
         """
         Docstring placeholder
@@ -188,6 +191,7 @@ class Plugin(indigo.PluginBase):
             if rs.address != dev.pluginProps["address"]
         ]
 
+    # ==============================================================================
     def device_updated(self, orig_dev, new_dev):
         """
         Docstring placeholder
@@ -197,14 +201,15 @@ class Plugin(indigo.PluginBase):
             for cs in self.adapters_for_device[new_dev.id]:
                 cs.go()
 
-    def run_concurrent_thread(self):
-        """
-        Docstring placeholder
-        """
-        try:
-
-            while True:
-                self.sleep(5)
-
-        except self.StopThread:
-            pass  # Optionally catch the StopThread exception and do any needed cleanup.
+    # ==============================================================================
+    # def run_concurrent_thread(self):
+    #     """
+    #     Docstring placeholder
+    #     """
+    #     try:
+    #
+    #         while True:
+    #             self.sleep(5)
+    #
+    #     except self.StopThread:
+    #         pass  # Optionally catch the StopThread exception and do any needed cleanup.

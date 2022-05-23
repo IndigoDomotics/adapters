@@ -338,7 +338,5 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
 
 def simple_eval(expr, operators=None, functions=None, names=None):
     """ Simply evaluate an expression """
-    s = SimpleEval(operators=operators,
-                   functions=functions,
-                   names=names)
+    s = SimpleEval(operators=operators, functions=functions, names=names)
     return s.eval(expr)
