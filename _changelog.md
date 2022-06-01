@@ -1,3 +1,7 @@
+### 2022.0.6
+- Adds trap for formula test tool when device first created.
+- Code refinements.
+
 ### 2022.0.5
 - Adds a tool to test expressions before saving them to the Adapters device.
 

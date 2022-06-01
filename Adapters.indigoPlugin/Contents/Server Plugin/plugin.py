@@ -7,14 +7,14 @@ Docstring placeholder
 import indigo  # noqa
 from sensor_adapter import SensorAdapter
 from pyrescaler.pyrescaler import *
-import logging
+import logging  # logging must be imported after pyrescaler
 
 __author__    = "dustysparkle, DaveL17"
 __copyright__ = "Not used."
 __license__   = "Apache 2.0"  # FIXME
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2022.0.5'
+__version__   = '2022.0.6'
 
 
 # ==============================================================================
@@ -34,6 +34,13 @@ class Plugin(indigo.PluginBase):
     """
     Docstring placeholder
     """
+
+    # ==============================================================================
+    def __del__(self):
+        """
+        Docstring placeholder
+        """
+        indigo.PluginBase.__del__(self)
 
     # ==============================================================================
     def __init__(self, plugin_id, plugin_display_name, plugin_version, plugin_prefs):
@@ -58,6 +65,23 @@ class Plugin(indigo.PluginBase):
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
+    def address_changed(self, values_dict=None, type_id="", target_id=0):
+        """
+        Docstring placeholder
+        """
+        self.logger.debug("address_changed")
+
+    # ==============================================================================
+    def device_updated(self, orig_dev, new_dev):
+        """
+        Docstring placeholder
+        """
+        indigo.PluginBase.device_updated(self, orig_dev, new_dev)
+        if new_dev.id in self.adapters_for_device:
+            for adapter in self.adapters_for_device[new_dev.id]:
+                adapter.go()
+
+    # ==============================================================================
     def debug_logging(self):
 
         # The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top
@@ -77,146 +101,6 @@ class Plugin(indigo.PluginBase):
         self.pyrescaler_logger = logging.getLogger("pyrescaler")  # pyrescaler.py logger
         self.pyrescaler_logger.addHandler(self.indigo_log_handler)
         self.pyrescaler_logger.setLevel(self.debug_level)
-
-    # ==============================================================================
-    def __del__(self):
-        """
-        Docstring placeholder
-        """
-        indigo.PluginBase.__del__(self)
-
-    # ==============================================================================
-    def get_eligible_sensors(self, _filter="", values_dict=None, type_id="", target_id=0):
-        """
-        Docstring placeholder
-        """
-        eligible_sensors = []
-        for dev in indigo.devices:
-            # don't include instances of this plugin/device in the list
-            if (not dev.pluginId) or (dev.pluginId != self.pluginId):
-                for (state_key, state_value) in dev.states.items():
-                    # only return devices/states that have a numeric value
-                    if _is_number(state_value):
-                        eligible_sensors.append(
-                            (f"{dev.id:d}.{state_key}",
-                             f"{dev.name} ({state_key}): {f'{float(state_value):.1f}'}"
-                             )
-                        )
-
-        return eligible_sensors
-
-    # ==============================================================================
-    @staticmethod
-    def get_device_config_ui_values(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
-        """
-        Docstring placeholder
-        """
-        # Remove any test results so UI opens clean next time
-        values_dict['formula_test'] = "Press the Show Result button to see the result."
-        return values_dict
-
-    # ==============================================================================
-    # @staticmethod
-    # def validate_device_config_ui(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
-    #     """
-    #     Docstring placeholder
-    #     """
-    #     # Remove any test results so UI opens clean next time
-    #     values_dict['formula_test'] = "Press the Show Result button to see the result."
-    #     return True, values_dict
-
-    # ==============================================================================
-    def validate_prefs_config_ui(self, values_dict):
-        """
-        Docstring placeholder
-        """
-        self.debug_level = int(values_dict['showDebugLevel'])
-        self.indigo_log_handler.setLevel(self.debug_level)
-        self.sensor_logger.setLevel(self.debug_level)
-        self.pyrescaler_logger.setLevel(self.debug_level)
-        return True
-
-    # ==============================================================================
-    def startup(self):
-        """
-        Docstring placeholder
-        """
-        self.logger.debug("startup called")
-
-    # ==============================================================================
-    def shutdown(self):
-        """
-        Docstring placeholder
-        """
-        self.logger.debug("shutdown called")
-
-    # ==============================================================================
-    def open_browser_to_python_format_help(self, values_dict=None, type_id="", target_id=0):
-        """
-        Docstring placeholder
-        """
-        self.browserOpen("https://pyformat.info")
-
-    # ==============================================================================
-    def address_changed(self, values_dict=None, type_id="", target_id=0):
-        """
-        Docstring placeholder
-        """
-        self.logger.debug("address_changed")
-
-    # ==============================================================================
-    def show_formula_result(self, values_dict=None, type_id="", target_id=0):
-        """
-        Test adapter device conversion settings
-        """
-        import simpleeval
-        addr        = values_dict['address']   # i.e., 12345678.temperature
-        multiplier  = values_dict.get('multiplier', "")
-        offset      = values_dict.get('offset', "")
-        source      = addr.split('.')        # ['12345678', 'temperature']
-        val_format  = values_dict['format']
-        val_value   = indigo.devices[int(source[0])].states[source[1]]
-
-        # Get the formula
-        if type_id == "customConvertedSensor":
-            val_formula = f"({val_value} * {multiplier}) + {offset}"
-        else:
-            val_formula = values_dict['formula']
-
-        # Evaluate the formula expression
-        try:
-            result = simpleeval.simple_eval(val_formula, names={"x": val_value})
-        except (SyntaxError, TypeError, ValueError) as err:
-            result = f"Invalid Formula Expression: {err}"
-
-        # Evaluate the format expression
-        try:
-            result = val_format.format(result)
-        except (IndexError, TypeError, ValueError) as err:
-            result = f"Invalid Format Expression: {err}"
-
-        values_dict['formula_test'] = result
-        return values_dict
-
-    # ==============================================================================
-    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
-        """
-        Docstring placeholder
-        """
-        self.logger.debug("scale_type_changed")
-
-    # ==============================================================================
-    def get_scales(self, _filter="", values_dict=None, type_id="", target_id=0):
-        """
-        Docstring placeholder
-        """
-        self.logger.debug("get_scales")
-        if "scaleType" not in values_dict:
-            return []
-        self.logger.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
-        opts = get_scale_options(scale_type=values_dict["scaleType"])
-        self.logger.debug(f"scale options: {opts}")
-        return opts
 
     # ==============================================================================
     def device_start_comm(self, dev):
@@ -248,14 +132,125 @@ class Plugin(indigo.PluginBase):
         ]
 
     # ==============================================================================
-    def device_updated(self, orig_dev, new_dev):
+    @staticmethod
+    def get_device_config_ui_values(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
         """
         Docstring placeholder
         """
-        indigo.PluginBase.device_updated(self, orig_dev, new_dev)
-        if new_dev.id in self.adapters_for_device:
-            for adapter in self.adapters_for_device[new_dev.id]:
-                adapter.go()
+        # Remove any test results so UI opens clean next time
+        values_dict['formula_test'] = "Press the Show Result button to see the result."
+        return values_dict
+
+    # ==============================================================================
+    def get_eligible_sensors(self, _filter="", values_dict=None, type_id="", target_id=0):
+        """
+        Docstring placeholder
+        """
+        eligible_sensors = []
+        for dev in indigo.devices:
+            # don't include instances of this plugin/device in the list
+            if (not dev.pluginId) or (dev.pluginId != self.pluginId):
+                for (state_key, state_value) in dev.states.items():
+                    # only return devices/states that have a numeric value
+                    if _is_number(state_value):
+                        eligible_sensors.append(
+                            (f"{dev.id:d}.{state_key}",
+                             f"{dev.name} ({state_key}): {f'{float(state_value):.1f}'}"
+                             )
+                        )
+
+        return eligible_sensors
+
+    # ==============================================================================
+    def get_scales(self, _filter="", values_dict=None, type_id="", target_id=0):
+        """
+        Docstring placeholder
+        """
+        self.logger.debug("get_scales")
+        if "scaleType" not in values_dict:
+            return []
+        self.logger.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
+        opts = get_scale_options(scale_type=values_dict["scaleType"])
+        self.logger.debug(f"scale options: {opts}")
+        return opts
+
+    # ==============================================================================
+    def open_browser_to_python_format_help(self, values_dict=None, type_id="", target_id=0):
+        """
+        Docstring placeholder
+        """
+        self.browserOpen("https://pyformat.info")
+
+    # ==============================================================================
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
+        """
+        Docstring placeholder
+        """
+        self.logger.debug("scale_type_changed")
+
+    # ==============================================================================
+    @staticmethod
+    def show_formula_result(values_dict=None, type_id="", target_id=0):
+        """
+        Test adapter device conversion settings
+        """
+        import simpleeval
+        addr        = values_dict['address']   # i.e., 12345678.temperature
+        multiplier  = values_dict.get('multiplier', "")
+        offset      = values_dict.get('offset', "")
+        source      = addr.split('.')        # ['12345678', 'temperature']
+        val_format  = values_dict['format']
+
+        try:
+            val_value   = indigo.devices[int(source[0])].states[source[1]]
+        except ValueError:
+            return values_dict
+
+        # Get the formula
+        if type_id == "customConvertedSensor":
+            val_formula = f"({val_value} * {multiplier}) + {offset}"
+        else:
+            val_formula = values_dict['formula']
+
+        # Evaluate the formula expression
+        try:
+            result = simpleeval.simple_eval(val_formula, names={"x": val_value})
+        except (SyntaxError, TypeError, ValueError) as err:
+            result = f"Invalid Formula Expression: {err}"
+
+        # Evaluate the format expression
+        try:
+            result = val_format.format(result)
+        except (IndexError, TypeError, ValueError) as err:
+            result = f"Invalid Format Expression: {err}"
+
+        values_dict['formula_test'] = result
+        return values_dict
+
+    # ==============================================================================
+    def shutdown(self):
+        """
+        Docstring placeholder
+        """
+        self.logger.debug("shutdown called")
+
+    # ==============================================================================
+    def startup(self):
+        """
+        Docstring placeholder
+        """
+        self.logger.debug("startup called")
+
+    # ==============================================================================
+    def validate_prefs_config_ui(self, values_dict):
+        """
+        Docstring placeholder
+        """
+        self.debug_level = int(values_dict['showDebugLevel'])
+        self.indigo_log_handler.setLevel(self.debug_level)
+        self.sensor_logger.setLevel(self.debug_level)
+        self.pyrescaler_logger.setLevel(self.debug_level)
+        return True
 
     # ==============================================================================
     # def run_concurrent_thread(self):
