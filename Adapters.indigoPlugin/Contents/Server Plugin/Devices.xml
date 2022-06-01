@@ -75,6 +75,15 @@
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
+
+			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
+				<Label>Result:</Label>
+			</Field>
+			<Field id="update_result" type="button">
+				<Title>Show Result</Title>
+				<CallbackMethod>show_formula_result</CallbackMethod>
+			</Field>
+
 			<Field id="openFormatHelp" type="button">
 		    <Label/>
 		    <Title>Formatting Help</Title>
@@ -127,6 +136,15 @@
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
+
+			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
+				<Label>Result:</Label>
+			</Field>
+			<Field id="update_result" type="button">
+				<Title>Show Result</Title>
+				<CallbackMethod>show_formula_result</CallbackMethod>
+			</Field>
+
 			<Field id="openFormatHelp" type="button">
 				<Label/>
 				<Title>Formatting Help</Title>
@@ -173,6 +191,15 @@
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
+
+			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
+				<Label>Result:</Label>
+			</Field>
+			<Field id="update_result" type="button">
+				<Title>Show Result</Title>
+				<CallbackMethod>show_formula_result</CallbackMethod>
+			</Field>
+
 			<Field id="openFormatHelp" type="button">
 				<Label/>
 				<Title>Formatting Help</Title>

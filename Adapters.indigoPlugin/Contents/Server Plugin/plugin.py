@@ -14,7 +14,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"  # FIXME
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2022.0.4'
+__version__   = '2022.0.5'
 
 
 # ==============================================================================
@@ -106,6 +106,26 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
+    @staticmethod
+    def get_device_config_ui_values(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
+        """
+        Docstring placeholder
+        """
+        # Remove any test results so UI opens clean next time
+        values_dict['formula_test'] = "Press the Show Result button to see the result."
+        return values_dict
+
+    # ==============================================================================
+    # @staticmethod
+    # def validate_device_config_ui(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
+    #     """
+    #     Docstring placeholder
+    #     """
+    #     # Remove any test results so UI opens clean next time
+    #     values_dict['formula_test'] = "Press the Show Result button to see the result."
+    #     return True, values_dict
+
+    # ==============================================================================
     def validate_prefs_config_ui(self, values_dict):
         """
         Docstring placeholder
@@ -143,6 +163,40 @@ class Plugin(indigo.PluginBase):
         Docstring placeholder
         """
         self.logger.debug("address_changed")
+
+    # ==============================================================================
+    def show_formula_result(self, values_dict=None, type_id="", target_id=0):
+        """
+        Test adapter device conversion settings
+        """
+        import simpleeval
+        addr        = values_dict['address']   # i.e., 12345678.temperature
+        multiplier  = values_dict.get('multiplier', "")
+        offset      = values_dict.get('offset', "")
+        source      = addr.split('.')        # ['12345678', 'temperature']
+        val_format  = values_dict['format']
+        val_value   = indigo.devices[int(source[0])].states[source[1]]
+
+        # Get the formula
+        if type_id == "customConvertedSensor":
+            val_formula = f"({val_value} * {multiplier}) + {offset}"
+        else:
+            val_formula = values_dict['formula']
+
+        # Evaluate the formula expression
+        try:
+            result = simpleeval.simple_eval(val_formula, names={"x": val_value})
+        except (SyntaxError, TypeError, ValueError) as err:
+            result = f"Invalid Formula Expression: {err}"
+
+        # Evaluate the format expression
+        try:
+            result = val_format.format(result)
+        except (IndexError, TypeError, ValueError) as err:
+            result = f"Invalid Format Expression: {err}"
+
+        values_dict['formula_test'] = result
+        return values_dict
 
     # ==============================================================================
     def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
@@ -189,8 +243,8 @@ class Plugin(indigo.PluginBase):
         Docstring placeholder
         """
         self.active_adapters = [
-            rs for rs in self.active_adapters
-            if rs.address != dev.pluginProps["address"]
+            adapter for adapter in self.active_adapters
+            if adapter.address != dev.pluginProps["address"]
         ]
 
     # ==============================================================================
@@ -200,8 +254,8 @@ class Plugin(indigo.PluginBase):
         """
         indigo.PluginBase.device_updated(self, orig_dev, new_dev)
         if new_dev.id in self.adapters_for_device:
-            for cs in self.adapters_for_device[new_dev.id]:
-                cs.go()
+            for adapter in self.adapters_for_device[new_dev.id]:
+                adapter.go()
 
     # ==============================================================================
     # def run_concurrent_thread(self):

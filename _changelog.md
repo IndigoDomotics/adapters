@@ -1,3 +1,6 @@
+### 2022.0.5
+- Adds a tool to test expressions before saving them to the Adapters device.
+
 ### 2022.0.4
 - Removes Rankine and Kelvin from temperature conversions (can be reactivated if needed.)
 

@@ -69,6 +69,7 @@ class SensorAdapter:
         )
         self.logging.debug(f"{self.name()} converted to: {converted_txt}")
 
+        return converted_txt
 
 # ==============================================================================
 class _PredefinedDelegate:
