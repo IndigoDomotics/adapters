@@ -14,7 +14,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"  # FIXME
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2022.0.3'
+__version__   = '2022.0.4'
 
 
 # ==============================================================================

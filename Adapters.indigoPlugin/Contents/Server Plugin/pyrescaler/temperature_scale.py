@@ -98,77 +98,77 @@ class Celsius(TemperatureScale):
 register_scale(SCALE_TYPE, "Celsius", "C", Celsius)
 
 
-class Kelvin(TemperatureScale):
-    """
-    Docstring placeholder
-    """
-
-    def __init__(self, input_scale=None, precision=1):
-        """
-        Docstring placeholder
-        """
-        TemperatureScale.__init__(self, input_scale, precision=precision)
-
-    @staticmethod
-    def _to_canonical(k_temp):
-        """
-        Docstring placeholder
-        """
-        # Kelvin is the canonical representation, so nothing to do
-        return float(k_temp)
-
-    @staticmethod
-    def _from_canonical(k_temp):
-        """
-        Docstring placeholder
-        """
-        # Kelvin is the canonical representation, so nothing to do
-        return float(k_temp)
-
-    @staticmethod
-    def suffix():
-        """
-        Docstring placeholder
-        """
-        return "K"
-
-
-register_scale(SCALE_TYPE, "Kelvin", "K", Kelvin)
-
-
-class Rankine(TemperatureScale):
-    """
-    Docstring placeholder
-    """
-
-    def __init__(self, input_scale=None, precision=1):
-        """
-        Docstring placeholder
-        """
-        TemperatureScale.__init__(self, input_scale, precision=precision)
-
-    # R -> K
-    @staticmethod
-    def _to_canonical(r_temp):
-        """
-        Docstring placeholder
-        """
-        return float(r_temp) * 5 / 9
-
-    # K -> R
-    @staticmethod
-    def _from_canonical(k_temp):
-        """
-        Docstring placeholder
-        """
-        return 1.8 * float(k_temp)
-
-    @staticmethod
-    def suffix():
-        """
-        Docstring placeholder
-        """
-        return "°Ra"
-
-
-register_scale(SCALE_TYPE, "Rankine", "R", Rankine)
+# class Kelvin(TemperatureScale):
+#     """
+#     Docstring placeholder
+#     """
+#
+#     def __init__(self, input_scale=None, precision=1):
+#         """
+#         Docstring placeholder
+#         """
+#         TemperatureScale.__init__(self, input_scale, precision=precision)
+#
+#     @staticmethod
+#     def _to_canonical(k_temp):
+#         """
+#         Docstring placeholder
+#         """
+#         # Kelvin is the canonical representation, so nothing to do
+#         return float(k_temp)
+#
+#     @staticmethod
+#     def _from_canonical(k_temp):
+#         """
+#         Docstring placeholder
+#         """
+#         # Kelvin is the canonical representation, so nothing to do
+#         return float(k_temp)
+#
+#     @staticmethod
+#     def suffix():
+#         """
+#         Docstring placeholder
+#         """
+#         return "K"
+#
+#
+# register_scale(SCALE_TYPE, "Kelvin", "K", Kelvin)
+#
+#
+# class Rankine(TemperatureScale):
+#     """
+#     Docstring placeholder
+#     """
+#
+#     def __init__(self, input_scale=None, precision=1):
+#         """
+#         Docstring placeholder
+#         """
+#         TemperatureScale.__init__(self, input_scale, precision=precision)
+#
+#     # R -> K
+#     @staticmethod
+#     def _to_canonical(r_temp):
+#         """
+#         Docstring placeholder
+#         """
+#         return float(r_temp) * 5 / 9
+#
+#     # K -> R
+#     @staticmethod
+#     def _from_canonical(k_temp):
+#         """
+#         Docstring placeholder
+#         """
+#         return 1.8 * float(k_temp)
+#
+#     @staticmethod
+#     def suffix():
+#         """
+#         Docstring placeholder
+#         """
+#         return "°Ra"
+#
+#
+# register_scale(SCALE_TYPE, "Rankine", "R", Rankine)
