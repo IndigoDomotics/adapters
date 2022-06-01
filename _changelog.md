@@ -1,3 +1,6 @@
+### 2022.0.3
+- Adds icons to devices lacking them; improves state value alignment in the Indigo UI.
+ 
 ### 2022.0.2
 - Refactors logging.
 

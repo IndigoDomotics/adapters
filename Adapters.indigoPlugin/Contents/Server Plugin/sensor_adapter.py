@@ -90,6 +90,8 @@ class _PredefinedDelegate:
         if 'temperature' == self.scale_type:
             # set icon to 'temperature sensor'
             dev.updateStateImageOnServer(indigo.kStateImageSel.TemperatureSensor)
+        else:
+            dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
 
         self.adapter.desired_scale = (
             get_converter(
@@ -132,6 +134,8 @@ class _AffineTransformDelegate:
             )
         )
 
+        dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
+
     # ==============================================================================
     def name(self):
         """
@@ -161,6 +165,8 @@ class _FormulaDelegate:
                 formula=dev.pluginProps["formula"], format_string=self.format
             )
         )
+
+        dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
 
     # ==============================================================================
     def name(self):

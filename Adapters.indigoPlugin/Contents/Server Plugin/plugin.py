@@ -11,19 +11,19 @@ import logging
 
 __author__    = "dustysparkle, DaveL17"
 __copyright__ = "Not used."
-__license__   = "Apache 2.0"
+__license__   = "Apache 2.0"  # FIXME
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2022.0.2'
+__version__   = '2022.0.3'
 
 
 # ==============================================================================
-def _is_number(s):
+def _is_number(val):
     """
     Docstring placeholder
     """
     try:
-        float(s)
+        float(val)
         return True
     except ValueError:
         return False
@@ -46,6 +46,9 @@ class Plugin(indigo.PluginBase):
 
         self.active_adapters     = []
         self.adapters_for_device = {}
+        self.debug_level         = int(self.pluginPrefs.get('showDebugLevel', "30"))
+        self.sensor_logger       = None
+        self.pyrescaler_logger   = None
 
         # =============================== Debug Logging ================================
         self.debug_logging()
@@ -65,7 +68,6 @@ class Plugin(indigo.PluginBase):
             logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S')
         )
 
-        self.debug_level = int(self.pluginPrefs.get('showDebugLevel', "30"))
         self.indigo_log_handler.setLevel(self.debug_level)
 
         self.sensor_logger = logging.getLogger("sensor_adapter")  # sensor_adapter.py logger
