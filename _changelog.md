@@ -1,3 +1,6 @@
+### 2022.0.7
+- Improves formula test tool UI error reporting (error_msg_dict).
+
 ### 2022.0.6
 - Adds trap for formula test tool when device first created.
 - Code refinements.

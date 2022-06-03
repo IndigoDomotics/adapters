@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <Devices>
-
 	<Device type="sensor" id="tempConvertedSensor">
-
 		<Name>Predefined Scale Adapter</Name>
-
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
@@ -28,7 +25,6 @@
 				<Label>Desired Scale:</Label>
 				<List class="self" filter="" method="get_scales" dynamicReload="true"/>
 			</Field>
-
 			<Field id="precision" type="menu" defaultValue="1">
 				<Label>Precision:</Label>
 				<List>
@@ -38,18 +34,14 @@
 					<Option value="3">1.000</Option>
 				</List>
 			</Field>
-
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
-
 	</Device>
 
 	<Device type="sensor" id="customConvertedSensor">
-
 		<Name>Custom Linear Scale Adapter</Name>
-
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
@@ -68,14 +60,12 @@
 			<Field id="offset" type="textfield" defaultValue="0.0">
 				<Label>Offset:</Label>
 			</Field>
-
 			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
 				<Label>Format:</Label>
 			</Field>
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
-
 			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
 				<Label>Result:</Label>
 			</Field>
@@ -83,31 +73,25 @@
 				<Title>Show Result</Title>
 				<CallbackMethod>show_formula_result</CallbackMethod>
 			</Field>
-
 			<Field id="openFormatHelp" type="button">
 		    <Label/>
 		    <Title>Formatting Help</Title>
 		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
-		  </Field>
-
+		  	</Field>
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
-
 	</Device>
 
 	<Device type="sensor" id="formulaConvertedSensor">
-
 		<Name>Custom Formula Adapter (numeric result)</Name>
-
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
 				<List class="self" method="get_eligible_sensors"/>
 				<CallbackMethod>address_changed</CallbackMethod>
 			</Field>
-
 			<Field id="mathLabel1" type="label" alignWithControl="true">
 				<Label>Mathematical formula for conversion (use 'x' for input value)</Label>
 			</Field>
@@ -129,14 +113,12 @@
 			<Field id="numFormulaExample5" type="label" alignWithControl="true" fontSize="small">
 				<Label> 1 if x == 2 else -1 if x == 3 else 0</Label>
 			</Field>
-
 			<Field id="format" type="textfield" defaultValue="{0:.1f} units">
 				<Label>Format:</Label>
 			</Field>
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
-
 			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
 				<Label>Result:</Label>
 			</Field>
@@ -144,31 +126,25 @@
 				<Title>Show Result</Title>
 				<CallbackMethod>show_formula_result</CallbackMethod>
 			</Field>
-
 			<Field id="openFormatHelp" type="button">
 				<Label/>
 				<Title>Formatting Help</Title>
 				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 			</Field>
-
 			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
-
 	</Device>
 
 	<Device type="custom" id="formulaConvertedSensorString">
-
 		<Name>Custom Formula Adapter (string result)</Name>
-
 		<ConfigUI>
 			<Field id="address" type="menu">
 				<Label>Sensor (state):</Label>
 				<List class="self" method="get_eligible_sensors"/>
 				<CallbackMethod>address_changed</CallbackMethod>
 			</Field>
-
 			<Field id="mathLabel1" type="label" alignWithControl="true">
 				<Label>Mathematical formula for conversion (use 'x' for input value)</Label>
 			</Field>
@@ -191,7 +167,6 @@
 			<Field id="formatLabel" type="label" alignWithControl="true">
 				<Label>Format is specified using the "new style" Python syntax.</Label>
 			</Field>
-
 			<Field id="formula_test" type="textfield" readonly="true" dynamicReload="true">
 				<Label>Result:</Label>
 			</Field>
@@ -199,15 +174,12 @@
 				<Title>Show Result</Title>
 				<CallbackMethod>show_formula_result</CallbackMethod>
 			</Field>
-
 			<Field id="openFormatHelp" type="button">
 				<Label/>
 				<Title>Formatting Help</Title>
 				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 			</Field>
-
 		</ConfigUI>
-
 		<States>
 			<State id="sensorValue">
 				<ValueType>String</ValueType>
@@ -216,8 +188,5 @@
 			</State>
 		</States>
 		<UiDisplayStateId>sensorValue</UiDisplayStateId>
-
 	</Device>
-
-
 </Devices>

@@ -67,7 +67,7 @@ class SensorAdapter:
             decimalPlaces=self.precision,
             uiValue=converted_txt
         )
-        self.logging.debug(f"{self.name()} converted to: {converted_txt}")
+        self.logging.debug(f" {self.name()}  converted to: [ {converted_txt} ]")
 
         return converted_txt
 
