@@ -1,3 +1,6 @@
+### 2022.1.0
+- plugin store release 
+
 ### 2022.0.7
 - Improves formula test tool UI error reporting (error_msg_dict).
 
