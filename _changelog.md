@@ -1,8 +1,6 @@
 ### 2022.1.8
 - Adds trap to `sensor_adaptor.go()` method to avoid infrequent tracebacks when devices not available at startup.
-
-### 2022.1.0
-- plugin store release 
+- Released to the Plugin Store
 
 ### 2022.0.7
 - Improves formula test tool UI error reporting (error_msg_dict).
