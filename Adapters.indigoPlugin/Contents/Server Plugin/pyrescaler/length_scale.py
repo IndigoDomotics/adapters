@@ -1,228 +1,516 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pyrescaler import *
+"""
+Docstring placeholder
+"""
 
+from .pyrescaler import *
 
 SCALE_TYPE = "length"
 
+
+# ==============================================================================
 # Internal canonical representation is meters
-#
 class LengthScale(PredefinedScaledMeasurement):
-	def __init__(self, input_scale=None, precision=1):
-		PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
-		print "%s: %s" % (self.suffix(), self.__class__)
+    """
+    Docstring placeholder
+    """
 
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        PredefinedScaledMeasurement.__init__(self, input_scale, precision=precision)
+        print(f"{self.suffix()}: {self.__class__}")
+
+
+# ==============================================================================
 class Inches(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# in -> m
-	def _to_canonical(self, x):
-		return float(x) * 0.0254
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> in
-	def _from_canonical(self, x):
-		return float(x) / 0.0254
+    # ==============================================================================
+    # in -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 0.0254
 
-	def suffix(self):
-		return u"in"
+    # ==============================================================================
+    # m -> in
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 0.0254
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "in"
+
 
 register_scale(SCALE_TYPE, "Inches", "in", Inches)
 
 
+# ==============================================================================
 class Feet(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# ft -> m
-	def _to_canonical(self, x):
-		return float(x) * 0.3048
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> ft
-	def _from_canonical(self, x):
-		return float(x) * 3.2808
+    # ==============================================================================
+    # ft -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 0.3048
 
-	def suffix(self):
-		return u"ft"
+    # ==============================================================================
+    # m -> ft
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 3.2808
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "ft"
+
 
 register_scale(SCALE_TYPE, "Feet", "ft", Feet)
 
 
+# ==============================================================================
 class Yards(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# yd -> m
-	def _to_canonical(self, x):
-		return float(x) / 1.0936
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> yd
-	def _from_canonical(self, x):
-		return float(x) * 1.0936
+    # ==============================================================================
+    # yd -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 1.0936
 
-	def suffix(self):
-		return u"yd"
+    # ==============================================================================
+    # m -> yd
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 1.0936
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "yd"
+
 
 register_scale(SCALE_TYPE, "Yards", "yd", Yards)
 
 # class Furlongs(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+#     def __init__(self, input_scale=None):
+#         LengthScale.__init__(self, input_scale)
 
+
+# ==============================================================================
 class Miles(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# mi -> m
-	def _to_canonical(self, x):
-		return float(x) * 1609.34
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> mi
-	def _from_canonical(self, x):
-		return float(x) / 1609.34
+    # ==============================================================================
+    # mi -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 1609.34
 
-	def suffix(self):
-		return u"mi"
+    # ==============================================================================
+    # m -> mi
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 1609.34
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "mi"
+
 
 register_scale(SCALE_TYPE, "Miles", "mi", Miles)
 
 
+# ==============================================================================
 class Centimeters(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# cm -> m
-	def _to_canonical(self, x):
-		return float(x) / 100
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> cm
-	def _from_canonical(self, x):
-		return float(x) * 100
+    # ==============================================================================
+    # cm -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 100
 
-	def suffix(self):
-		return u"cm"
+    # ==============================================================================
+    # m -> cm
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 100
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "cm"
+
 
 register_scale(SCALE_TYPE, "Centimeters", "cm", Centimeters)
 
 
+# ==============================================================================
 class Meters(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# no change
-	def _to_canonical(self, x):
-		return float(x)
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# no change
-	def _from_canonical(self, x):
-		return float(x)
+    # ==============================================================================
+    # no change
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val)
 
-	def suffix(self):
-		return u"m"
+    # ==============================================================================
+    # no change
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val)
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "m"
+
 
 register_scale(SCALE_TYPE, "Meters", "m", Meters)
 
 
+# ==============================================================================
 class Kilometers(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# km -> m
-	def _to_canonical(self, x):
-		return float(x) * 1000
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> km
-	def _from_canonical(self, x):
-		return float(x) / 1000
+    # ==============================================================================
+    # km -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 1000
 
-	def suffix(self):
-		return u"km"
+    # ==============================================================================
+    # m -> km
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 1000
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "km"
+
 
 register_scale(SCALE_TYPE, "Kilometers", "km", Kilometers)
 
 
+# ==============================================================================
 class NauticalMiles(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# nmi -> m
-	def _to_canonical(self, x):
-		return float(x) * 1852
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> nmi
-	def _from_canonical(self, x):
-		return float(x) / 1852
+    # ==============================================================================
+    # nmi -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 1852
 
-	def suffix(self):
-		return u"nmi"
+    # ==============================================================================
+    # m -> nmi
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 1852
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "nmi"
+
 
 register_scale(SCALE_TYPE, "Nautical Miles", "nmi", NauticalMiles)
 
 
+# ==============================================================================
 class Fathoms(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# fm -> m
-	def _to_canonical(self, x):
-		return float(x) * 1.8288
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> fm
-	def _from_canonical(self, x):
-		return float(x) / 1.8288
+    # ==============================================================================
+    # fm -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 1.8288
 
-	def suffix(self):
-		return u"fm"
+    # ==============================================================================
+    # m -> fm
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 1.8288
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "fm"
+
 
 register_scale(SCALE_TYPE, "Fathoms", "fm", Fathoms)
 
 
+# ==============================================================================
 class Cubits(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# cbt -> m
-	def _to_canonical(self, x):
-		return float(x) / 2.18723
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> cbt
-	def _from_canonical(self, x):
-		return float(x) * 2.18723
+    # ==============================================================================
+    # cbt -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 2.18723
 
-	def suffix(self):
-		return u"cbt"
+    # ==============================================================================
+    # m -> cbt
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 2.18723
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "cbt"
+
 
 register_scale(SCALE_TYPE, "Cubits", "cbt", Cubits)
 
 
+# ==============================================================================
 class Hands(LengthScale):
-	def __init__(self, input_scale=None, precision=1):
-		LengthScale.__init__(self, input_scale, precision=precision)
+    """
+    Docstring placeholder
+    """
 
-	# h -> m
-	def _to_canonical(self, x):
-		return float(x) / 9.84252
+    # ==============================================================================
+    def __init__(self, input_scale=None, precision=1):
+        """
+        Docstring placeholder
+        """
+        LengthScale.__init__(self, input_scale, precision=precision)
 
-	# m -> h
-	def _from_canonical(self, x):
-		return float(x) * 9.84252
+    # ==============================================================================
+    # h -> m
+    @staticmethod
+    def _to_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) / 9.84252
 
-	def suffix(self):
-		return u"h"
+    # ==============================================================================
+    # m -> h
+    @staticmethod
+    def _from_canonical(val):
+        """
+        Docstring placeholder
+        """
+        return float(val) * 9.84252
+
+    # ==============================================================================
+    @staticmethod
+    def suffix():
+        """
+        Docstring placeholder
+        """
+        return "h"
+
 
 register_scale(SCALE_TYPE, "Hands", "h", Hands)
 
 
-#
+# ==============================================================================
 # class Parsecs(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+#     def __init__(self, input_scale=None):
+#         LengthScale.__init__(self, input_scale)
 #
+# ==============================================================================
 # class LightYears(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+#     def __init__(self, input_scale=None):
+#         LengthScale.__init__(self, input_scale)
 #
+# ==============================================================================
 # class Angstroms(LengthScale):
-# 	def __init__(self, input_scale=None):
-# 		LengthScale.__init__(self, input_scale)
+#     def __init__(self, input_scale=None):
+#         LengthScale.__init__(self, input_scale)

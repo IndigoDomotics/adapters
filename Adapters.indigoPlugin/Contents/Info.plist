@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PluginVersion</key>
-	<string>1.0.1</string>
+	<string>2022.0.7</string>
 	<key>ServerApiVersion</key>
-	<string>1.0</string>
+	<string>3.0</string>
 	<key>IwsApiVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleDisplayName</key>
@@ -18,15 +18,8 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>http://temp-converter.indigo.drjason.com</string>
+			<string>https://www.indigodomo.com/pluginstore/100/</string>
 		</dict>
 	</array>
-	<key>GithubInfo</key>
-	<dict>
-		<key>GithubRepo</key>
-		<string>temperature-scale-adapters-indigo-plugin</string>
-		<key>GithubUser</key>
-		<string>jdhorne</string>
-	</dict>
 </dict>
 </plist>
