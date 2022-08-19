@@ -56,20 +56,24 @@ class SensorAdapter:
         """
         Docstring placeholder
         """
-        native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
+        try:
+            native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
 
-        converted_txt = self.desired_scale.format(native_value)
-        converted_value = self.desired_scale.convert(native_value)
+            converted_txt = self.desired_scale.format(native_value)
+            converted_value = self.desired_scale.convert(native_value)
 
-        self.dev.updateStateOnServer(
-            key="sensorValue",
-            value=converted_value,
-            decimalPlaces=self.precision,
-            uiValue=converted_txt
-        )
-        self.logging.debug(f" {self.name()}  converted to: [ {converted_txt} ]")
+            self.dev.updateStateOnServer(
+                key="sensorValue",
+                value=converted_value,
+                decimalPlaces=self.precision,
+                uiValue=converted_txt
+            )
+            self.logging.debug(f" {self.name()}  converted to: [ {converted_txt} ]")
 
-        return converted_txt
+            return converted_txt
+
+        except KeyError:
+            pass
 
 # ==============================================================================
 class _PredefinedDelegate:
