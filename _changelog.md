@@ -1,3 +1,6 @@
+### 2023.1.8
+- Code refinements.
+
 ### 2022.1.8
 - Adds trap to `sensor_adaptor.go()` method to avoid infrequent tracebacks when devices not available at startup.
 - Released to the Plugin Store
