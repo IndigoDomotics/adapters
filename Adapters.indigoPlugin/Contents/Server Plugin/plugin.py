@@ -1,30 +1,48 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Docstring placeholder
+This plugin for the Indigo home automation sever allows you to add thin "adapters" on top of your devices to perform
+all kinds of mathematical or formatting transformations.
+
+For example, suppose you have devices that report temperatures in Fahrenheit and you prefer Celsius, or the other way
+around. This plugin can generate "device adapters" that "wrap" around your native device and convert the temperature to
+the scale you prefer.
+
+It supports all kinds of things:
+- temperature, distance, and power conversions
+- arbitrary linear translations of numeric sensors (i.e. multiplier and an offset factor)
+- custom expressions and formats to transmogrify (single) sensor outputs in almost any way you can think of
+
+Originally authored by forum user `dustysparkle`.
+Contributions by: DaveL17
 """
 
-try:
-    import indigo
-except ImportError:
-    pass
+import logging  # NOTE: logging must be imported after pyrescaler
 import simpleeval
 from sensor_adapter import SensorAdapter
 from pyrescaler.pyrescaler import get_scale_options
-import logging  # NOTE: logging must be imported after pyrescaler
+
+try:
+    import indigo  # noqa
+    # import pydevd  # noqa
+except ImportError:
+    pass
 
 __author__    = "dustysparkle, DaveL17"
 __copyright__ = "Not used."
-__license__   = "Apache 2.0"  # FIXME - update to a more appropriate license
+__license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2023.1.0'
+__version__   = '2023.2.0'
 
 
 # ==============================================================================
-def _is_number(val):
+def _is_number(val) -> bool:
     """
-    Docstring placeholder
+    Convenience method to determine whether passed value is a number. This method will also return True if the passed
+    value is a string, as long as it will float.
+
+    :param val: The value to check
     """
     try:
         float(val)
@@ -44,9 +62,10 @@ class Plugin(indigo.PluginBase):
         """
         Docstring placeholder
         """
-        indigo.PluginBase.__init__(
-            self, plugin_id, plugin_display_name, plugin_version, plugin_prefs
-        )
+        # indigo.PluginBase.__init__(
+        #     self, plugin_id, plugin_display_name, plugin_version, plugin_prefs
+        # )
+        super().__init__(plugin_id, plugin_display_name, plugin_version, plugin_prefs)
 
         self.active_adapters     = []
         self.adapters_for_device = {}
@@ -57,12 +76,18 @@ class Plugin(indigo.PluginBase):
         # =============================== Debug Logging ================================
         self.debug_logging()
 
+        # ============================= Remote Debugging ===============================
+        # try:
+        #     pydevd.settrace('localhost', port=5678, stdoutToServer=True, stderrToServer=True, suspend=False)
+        # except:
+        #     pass
+
         # "Subscribe to Changes" from all indigo devices, so we can update our 'converted' values
         # any time the native value changes.
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
-    def address_changed(self, values_dict:indigo.Dict=None, type_id:str="", target_id:int=0):
+    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
         """
         Docstring placeholder
 
@@ -73,7 +98,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug("address_changed")
 
     # ==============================================================================
-    def device_updated(self, orig_dev:indigo.Dict, new_dev:indigo.Dict):
+    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict):
         """
         Docstring placeholder
 
@@ -106,7 +131,7 @@ class Plugin(indigo.PluginBase):
         self.pyrescaler_logger.setLevel(self.debug_level)
 
     # ==============================================================================
-    def device_start_comm(self, dev:indigo.Device):
+    def device_start_comm(self, dev: indigo.Device):
         """
         Docstring placeholder
 
@@ -128,7 +153,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug(f"added adapter: {new_device.name()}")
 
     # ==============================================================================
-    def device_stop_comm(self, dev:indigo.Device):
+    def device_stop_comm(self, dev: indigo.Device):
         """
         Docstring placeholder
 
@@ -142,8 +167,8 @@ class Plugin(indigo.PluginBase):
     # ==============================================================================
     @staticmethod
     def get_device_config_ui_values(
-            values_dict:indigo.Dict=None, user_cancelled:bool=False, type_id:str="", dev_id:int=0
-    ):
+            values_dict: indigo.Dict = None, user_cancelled: bool = False, type_id: str = "", dev_id: int = 0
+    ) -> indigo.Dict:
         """
         Docstring placeholder
 
@@ -157,7 +182,9 @@ class Plugin(indigo.PluginBase):
         return values_dict
 
     # ==============================================================================
-    def get_eligible_sensors(self, _filter:str="", values_dict:indigo.Dict=None, type_id:str="", target_id:int=0):
+    def get_eligible_sensors(
+            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ) -> list:
         """
         Docstring placeholder
 
@@ -182,7 +209,9 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
-    def get_scales(self, _filter:str="", values_dict:indigo.Dict=None, type_id:str="", target_id:int=0):
+    def get_scales(
+            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ) -> list:
         """
         Docstring placeholder
 
@@ -200,7 +229,9 @@ class Plugin(indigo.PluginBase):
         return opts
 
     # ==============================================================================
-    def open_browser_to_python_format_help(self, values_dict:indigo.Dict=None, type_id:str="", target_id:int=0):
+    def open_browser_to_python_format_help(
+            self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ):
         """
         Docstring placeholder
 
@@ -219,7 +250,7 @@ class Plugin(indigo.PluginBase):
     #     self.logger.debug("scale_type_changed")
 
     # ==============================================================================
-    def show_formula_result(self, values_dict:indigo.Dict=None, type_id:str="", target_id:int=0):
+    def show_formula_result(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
         """
         Test adapter device conversion settings
 
@@ -269,7 +300,7 @@ class Plugin(indigo.PluginBase):
         return values_dict
 
     # ==============================================================================
-    def validate_prefs_config_ui(self, values_dict:indigo.Dict):
+    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> bool:
         """
         Docstring placeholder
 
