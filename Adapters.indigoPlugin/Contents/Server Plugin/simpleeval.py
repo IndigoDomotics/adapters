@@ -196,7 +196,7 @@ DEFAULT_NAMES = {"True": True, "False": False}
 # And the actual evaluator:
 
 
-class   SimpleEval(object):  # pylint: disable=too-few-public-methods
+class SimpleEval(object):  # pylint: disable=too-few-public-methods
     """ A very simple expression parser.
         >>> s = SimpleEval()
         >>> s.eval("20 + 30 - ( 10 * 5)")

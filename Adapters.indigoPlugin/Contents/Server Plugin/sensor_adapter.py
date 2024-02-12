@@ -19,6 +19,8 @@ class SensorAdapter:
     def __init__(self, dev):
         """
         Docstring placeholder
+
+        :param dev:
         """
         self.logging = logging.getLogger('sensor_adapter')
 
@@ -85,6 +87,9 @@ class _PredefinedDelegate:
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
+
+        :param dev:
+        :param adapter:
         """
         self.adapter = adapter
         self.scale_type = dev.pluginProps["scaleType"]
@@ -128,6 +133,9 @@ class _AffineTransformDelegate:
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
+
+        :param dev:
+        :param adapter:
         """
         self.adapter = adapter
         self.format = dev.pluginProps["format"]
@@ -162,6 +170,9 @@ class _FormulaDelegate:
     def __init__(self, dev, adapter):
         """
         Docstring placeholder
+
+        :param dev:
+        :param adapter:
         """
         self.adapter = adapter
         self.format = dev.pluginProps["format"]

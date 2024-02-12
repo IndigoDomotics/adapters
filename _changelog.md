@@ -1,3 +1,11 @@
+### 2023.2.0
+- Code refinements.
+- Basic wiki pages.
+- Fixes `plugin does not define method scale_type_changed` error.
+
+### 2023.1.0
+- Code refinements.
+
 ### 2022.1.8
 - Adds trap to `sensor_adaptor.go()` method to avoid infrequent tracebacks when devices not available at startup.
 - Released to the Plugin Store

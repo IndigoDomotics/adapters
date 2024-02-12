@@ -1,26 +1,48 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Docstring placeholder
+This plugin for the Indigo home automation sever allows you to add thin "adapters" on top of your devices to perform
+all kinds of mathematical or formatting transformations.
+
+For example, suppose you have devices that report temperatures in Fahrenheit and you prefer Celsius, or the other way
+around. This plugin can generate "device adapters" that "wrap" around your native device and convert the temperature to
+the scale you prefer.
+
+It supports all kinds of things:
+- temperature, distance, and power conversions
+- arbitrary linear translations of numeric sensors (i.e. multiplier and an offset factor)
+- custom expressions and formats to transmogrify (single) sensor outputs in almost any way you can think of
+
+Originally authored by forum user `dustysparkle`.
+Contributions by: DaveL17
 """
 
-import indigo  # noqa
+import logging  # NOTE: logging must be imported after pyrescaler
+import simpleeval
 from sensor_adapter import SensorAdapter
-from pyrescaler.pyrescaler import *
-import logging  # logging must be imported after pyrescaler
+from pyrescaler.pyrescaler import get_scale_options
+
+try:
+    import indigo  # noqa
+    # import pydevd  # noqa
+except ImportError:
+    pass
 
 __author__    = "dustysparkle, DaveL17"
 __copyright__ = "Not used."
-__license__   = "Apache 2.0"  # FIXME - update to a more appropriate license
+__license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2022.1.8'
+__version__   = '2023.2.0'
 
 
 # ==============================================================================
-def _is_number(val):
+def _is_number(val) -> bool:
     """
-    Docstring placeholder
+    Convenience method to determine whether passed value is a number. This method will also return True if the passed
+    value is a string, as long as it will float.
+
+    :param val: The value to check
     """
     try:
         float(val)
@@ -40,9 +62,10 @@ class Plugin(indigo.PluginBase):
         """
         Docstring placeholder
         """
-        indigo.PluginBase.__init__(
-            self, plugin_id, plugin_display_name, plugin_version, plugin_prefs
-        )
+        # indigo.PluginBase.__init__(
+        #     self, plugin_id, plugin_display_name, plugin_version, plugin_prefs
+        # )
+        super().__init__(plugin_id, plugin_display_name, plugin_version, plugin_prefs)
 
         self.active_adapters     = []
         self.adapters_for_device = {}
@@ -53,21 +76,34 @@ class Plugin(indigo.PluginBase):
         # =============================== Debug Logging ================================
         self.debug_logging()
 
+        # ============================= Remote Debugging ===============================
+        # try:
+        #     pydevd.settrace('localhost', port=5678, stdoutToServer=True, stderrToServer=True, suspend=False)
+        # except:
+        #     pass
+
         # "Subscribe to Changes" from all indigo devices, so we can update our 'converted' values
         # any time the native value changes.
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
-    def address_changed(self, values_dict=None, type_id="", target_id=0):
+    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
         """
         Docstring placeholder
+
+        :param indigo.Dict values_dict:
+        :param str type_id:
+        :param int target_id:
         """
         self.logger.debug("address_changed")
 
     # ==============================================================================
-    def device_updated(self, orig_dev, new_dev):
+    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict):
         """
         Docstring placeholder
+
+        :param indigo.Device orig_dev:
+        :param indigo.Device new_dev:
         """
         indigo.PluginBase.device_updated(self, orig_dev, new_dev)
         if new_dev.id in self.adapters_for_device:
@@ -76,14 +112,13 @@ class Plugin(indigo.PluginBase):
 
     # ==============================================================================
     def debug_logging(self):
-
-        # The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top
-        # of other objects. For example, a sensor changes (which would typically be logged by
-        # Indigo or another plugin) so an additional log message from this plugin would be overkill.
+        """
+        The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top of other objects. For
+        example, a sensor changes (which would typically be logged by Indigo or another plugin) so an additional log
+        message from this plugin would be overkill.
+        """
         log_format = '%(asctime)s.%(msecs)03d\t%(levelname)-10s\t%(name)s.%(funcName)-28s %(msg)s'
-        self.plugin_file_handler.setFormatter(
-            logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S')
-        )
+        self.plugin_file_handler.setFormatter(logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S'))
 
         self.indigo_log_handler.setLevel(self.debug_level)
 
@@ -96,9 +131,11 @@ class Plugin(indigo.PluginBase):
         self.pyrescaler_logger.setLevel(self.debug_level)
 
     # ==============================================================================
-    def device_start_comm(self, dev):
+    def device_start_comm(self, dev: indigo.Device):
         """
         Docstring placeholder
+
+        :param indigo.Device dev:
         """
         self.logger.debug(f"device_start_comm: {dev.pluginProps['address']}")
 
@@ -116,9 +153,11 @@ class Plugin(indigo.PluginBase):
         self.logger.debug(f"added adapter: {new_device.name()}")
 
     # ==============================================================================
-    def device_stop_comm(self, dev):
+    def device_stop_comm(self, dev: indigo.Device):
         """
         Docstring placeholder
+
+        :param indigo.Device dev:
         """
         self.active_adapters = [
             adapter for adapter in self.active_adapters
@@ -127,18 +166,32 @@ class Plugin(indigo.PluginBase):
 
     # ==============================================================================
     @staticmethod
-    def get_device_config_ui_values(values_dict=None, user_cancelled=False, type_id="", dev_id=0):
+    def get_device_config_ui_values(
+            values_dict: indigo.Dict = None, user_cancelled: bool = False, type_id: str = "", dev_id: int = 0
+    ) -> indigo.Dict:
         """
         Docstring placeholder
+
+        :param indigo.Dict values_dict:
+        :param bool user_cancelled:
+        :param str type_id:
+        :param int dev_id:
         """
         # Remove any prior test results so UI opens clean next time
         values_dict['formula_test'] = "Press the Show Result button to see the result."
         return values_dict
 
     # ==============================================================================
-    def get_eligible_sensors(self, _filter="", values_dict=None, type_id="", target_id=0):
+    def get_eligible_sensors(
+            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ) -> list:
         """
         Docstring placeholder
+
+        :param str _filter:
+        :param indigo.Dict values_dict:
+        :param str type_id:
+        :param int target_id:
         """
         eligible_sensors = []
         for dev in indigo.devices:
@@ -156,9 +209,16 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
-    def get_scales(self, _filter="", values_dict=None, type_id="", target_id=0):
+    def get_scales(
+            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ) -> list:
         """
         Docstring placeholder
+
+        :param str _filter:
+        :param indigo.Dict values_dict:
+        :param str type_id:
+        :param int target_id:
         """
         self.logger.debug("get_scales")
         if "scaleType" not in values_dict:
@@ -169,26 +229,34 @@ class Plugin(indigo.PluginBase):
         return opts
 
     # ==============================================================================
-    def open_browser_to_python_format_help(self, values_dict=None, type_id="", target_id=0):
+    def open_browser_to_python_format_help(
+            self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+    ):
         """
         Docstring placeholder
+
+        :param indigo.Dict values_dict:
+        :param str type_id:
+        :param int target_id:
         """
         self.browserOpen("https://pyformat.info")
 
     # ==============================================================================
-    # FIXME - this may be unused everywhere. Testing without.
-    # def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
-    #     """
-    #     Docstring placeholder
-    #     """
-    #     self.logger.debug("scale_type_changed")
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
+        """
+        Called by Devices.xml when a Predefined Scale Adapter scale type is changed.
+        """
+        self.logger.debug("scale_type_changed")
 
     # ==============================================================================
-    def show_formula_result(self, values_dict=None, type_id="", target_id=0):
+    def show_formula_result(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
         """
         Test adapter device conversion settings
+
+        :param indigo.Dict values_dict:
+        :param str type_id:
+        :param int target_id:
         """
-        import simpleeval
         address        = values_dict['address']
         error_msg_dict = indigo.Dict()
         formatter      = values_dict['format']
@@ -231,9 +299,11 @@ class Plugin(indigo.PluginBase):
         return values_dict
 
     # ==============================================================================
-    def validate_prefs_config_ui(self, values_dict):
+    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> bool:
         """
         Docstring placeholder
+
+        :param indigo.Dict values_dict:
         """
         self.debug_level = int(values_dict['showDebugLevel'])
         self.indigo_log_handler.setLevel(self.debug_level)
