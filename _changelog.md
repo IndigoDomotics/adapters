@@ -1,5 +1,6 @@
 ### 2023.2.0
 - Code refinements.
+- Fixes `plugin does not define method scale_type_changed` error.
 
 ### 2023.1.0
 - Code refinements.

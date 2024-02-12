@@ -242,12 +242,11 @@ class Plugin(indigo.PluginBase):
         self.browserOpen("https://pyformat.info")
 
     # ==============================================================================
-    # FIXME - this may be unused everywhere. Testing without. Looks like it can go.
-    # def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
-    #     """
-    #     Docstring placeholder
-    #     """
-    #     self.logger.debug("scale_type_changed")
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
+        """
+        Called by Devices.xml when a Predefined Scale Adapter scale type is changed.
+        """
+        self.logger.debug("scale_type_changed")
 
     # ==============================================================================
     def show_formula_result(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
