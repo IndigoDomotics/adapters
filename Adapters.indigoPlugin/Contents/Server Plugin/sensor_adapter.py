@@ -3,10 +3,7 @@ Docstring placeholder
 """
 import logging
 import indigo  # noqa
-from pyrescaler.pyrescaler import (get_converter,
-                                   AffineScaledMeasurement,
-                                   ArbitraryFormulaScaledMeasurement
-                                   )
+from pyrescaler.pyrescaler import (get_converter, AffineScaledMeasurement, ArbitraryFormulaScaledMeasurement)
 
 
 # ==============================================================================
@@ -42,19 +39,19 @@ class SensorAdapter:
         else:
             self.delegate = _FormulaDelegate(dev, self)
 
-        self.logging.debug(f"new adapter: {self.name()}")
+        self.logging.debug("new adapter: %s " % self.name())
 
         self.go()
 
     # ==============================================================================
-    def name(self):
+    def name(self) -> str:
         """
         Docstring placeholder
         """
         return self.delegate.name()
 
     # ==============================================================================
-    def go(self):
+    def go(self) -> str:
         """
         Docstring placeholder
         """
@@ -70,12 +67,13 @@ class SensorAdapter:
                 decimalPlaces=self.precision,
                 uiValue=converted_txt
             )
-            self.logging.debug(f" {self.name()}  converted to: [ {converted_txt} ]")
+            self.logging.debug(" %s  converted to: [ %s ]" % (self.name(), converted_txt))
 
             return converted_txt
 
         except KeyError:
             pass
+
 
 # ==============================================================================
 class _PredefinedDelegate:
@@ -84,7 +82,7 @@ class _PredefinedDelegate:
     """
 
     # ==============================================================================
-    def __init__(self, dev, adapter):
+    def __init__(self, dev, adapter) -> None:
         """
         Docstring placeholder
 
@@ -113,7 +111,7 @@ class _PredefinedDelegate:
         )
 
     # ==============================================================================
-    def name(self):
+    def name(self) -> str:
         """
         Docstring placeholder
         """
@@ -150,14 +148,11 @@ class _AffineTransformDelegate:
         dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
 
     # ==============================================================================
-    def name(self):
+    def name(self) -> str:
         """
         Docstring placeholder
         """
-        return (
-            f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] "
-            f"{self.format}"
-        )
+        return f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] {self.format}"
 
 
 # ==============================================================================
@@ -185,11 +180,8 @@ class _FormulaDelegate:
         dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
 
     # ==============================================================================
-    def name(self):
+    def name(self) -> str:
         """
         Docstring placeholder
         """
-        return (
-            f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] "
-            f"{self.format}"
-        )
+        return f"{self.adapter.native_device_name}['{self.adapter.native_device_state_name}'] {self.format}"

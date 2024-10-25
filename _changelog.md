@@ -1,3 +1,8 @@
+### 2024.1.0
+- Removes unneeded PyCharm debugging code.
+- Cleans up .gitignore file.
+- More code typing.
+
 ### 2023.2.0
 - Code refinements.
 - Basic wiki pages.

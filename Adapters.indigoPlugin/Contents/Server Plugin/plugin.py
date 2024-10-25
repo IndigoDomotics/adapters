@@ -33,7 +33,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2023.2.0'
+__version__   = '2024.1.0'
 
 
 # ==============================================================================
@@ -76,18 +76,12 @@ class Plugin(indigo.PluginBase):
         # =============================== Debug Logging ================================
         self.debug_logging()
 
-        # ============================= Remote Debugging ===============================
-        # try:
-        #     pydevd.settrace('localhost', port=5678, stdoutToServer=True, stderrToServer=True, suspend=False)
-        # except:
-        #     pass
-
         # "Subscribe to Changes" from all indigo devices, so we can update our 'converted' values
         # any time the native value changes.
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
-    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
+    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
         """
         Docstring placeholder
 
@@ -98,7 +92,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug("address_changed")
 
     # ==============================================================================
-    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict):
+    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict) -> None:
         """
         Docstring placeholder
 
@@ -111,7 +105,7 @@ class Plugin(indigo.PluginBase):
                 adapter.go()
 
     # ==============================================================================
-    def debug_logging(self):
+    def debug_logging(self) -> None:
         """
         The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top of other objects. For
         example, a sensor changes (which would typically be logged by Indigo or another plugin) so an additional log
@@ -131,7 +125,7 @@ class Plugin(indigo.PluginBase):
         self.pyrescaler_logger.setLevel(self.debug_level)
 
     # ==============================================================================
-    def device_start_comm(self, dev: indigo.Device):
+    def device_start_comm(self, dev: indigo.Device) -> None:
         """
         Docstring placeholder
 
@@ -153,7 +147,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug(f"added adapter: {new_device.name()}")
 
     # ==============================================================================
-    def device_stop_comm(self, dev: indigo.Device):
+    def device_stop_comm(self, dev: indigo.Device) -> None:
         """
         Docstring placeholder
 
@@ -229,9 +223,7 @@ class Plugin(indigo.PluginBase):
         return opts
 
     # ==============================================================================
-    def open_browser_to_python_format_help(
-            self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
-    ):
+    def open_browser_to_python_format_help(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
         """
         Docstring placeholder
 
@@ -242,7 +234,7 @@ class Plugin(indigo.PluginBase):
         self.browserOpen("https://pyformat.info")
 
     # ==============================================================================
-    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0) -> None:
         """
         Called by Devices.xml when a Predefined Scale Adapter scale type is changed.
         """
