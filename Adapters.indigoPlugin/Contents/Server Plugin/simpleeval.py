@@ -73,6 +73,7 @@ You can pass names, operators and functions to the simple_eval function as well:
 """
 
 import ast
+import logging
 import sys
 import operator as op
 from random import random
@@ -83,6 +84,7 @@ from random import random
 MAX_STRING_LENGTH = 100000
 MAX_POWER = 4000000  # highest exponent
 PYTHON3 = sys.version_info[0] == 3
+LOGGER = logging.getLogger("Plugin")
 
 ########################################
 # Exceptions:

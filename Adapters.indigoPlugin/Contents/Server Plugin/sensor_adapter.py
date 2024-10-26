@@ -74,6 +74,10 @@ class SensorAdapter:
         except KeyError:
             pass
 
+    @staticmethod
+    def foo():
+        return "Foobar"
+
 
 # ==============================================================================
 class _PredefinedDelegate:

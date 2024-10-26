@@ -180,7 +180,7 @@ class Plugin(indigo.PluginBase):
             self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
     ) -> list:
         """
-        Docstring placeholder
+        Return a list of device/states with numeric values
 
         :param str _filter:
         :param indigo.Dict values_dict:
@@ -203,9 +203,7 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
-    def get_scales(
-            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
-    ) -> list:
+    def get_scales(self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> list:
         """
         Docstring placeholder
 
@@ -291,14 +289,39 @@ class Plugin(indigo.PluginBase):
         return values_dict
 
     # ==============================================================================
-    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> bool:
+    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> tuple:
         """
         Docstring placeholder
 
         :param indigo.Dict values_dict:
         """
-        self.debug_level = int(values_dict['showDebugLevel'])
-        self.indigo_log_handler.setLevel(self.debug_level)
-        self.sensor_logger.setLevel(self.debug_level)
-        self.pyrescaler_logger.setLevel(self.debug_level)
-        return True
+        error_msg_dict = indigo.Dict()
+        try:
+            self.debug_level = int(values_dict['showDebugLevel'])
+            self.indigo_log_handler.setLevel(self.debug_level)
+            self.sensor_logger.setLevel(self.debug_level)
+            self.pyrescaler_logger.setLevel(self.debug_level)
+            return True, values_dict
+        except TypeError as error:
+            error_msg_dict['showDebugLevel'] = "The debug level is invalid"
+            return False, values_dict, error_msg_dict
+
+    # ==============================================================================
+    def my_tests(self, action=None):
+        from Tests import test_plugin
+        plugin_tests = test_plugin.TestPlugin()
+        simple_eval_tests = test_plugin.TestSimpleEval()
+        sensor_adapter_tests = test_plugin.TestSensorAdapter()
+
+        def process_test_result(result, name):
+            if result[0] is True:
+                self.logger.warning(f"{name} tests passed.")
+            else:
+                self.logger.warning(f"{result[1]}")
+
+        test = plugin_tests.test_plugin(self)
+        process_test_result(test, "Plugin")
+        test = simple_eval_tests.test_simple_eval(self)
+        process_test_result(test, "Simple Eval")
+        test = sensor_adapter_tests.test_sensor_adapter(self)
+        process_test_result(test, "Sensor Adapter")
