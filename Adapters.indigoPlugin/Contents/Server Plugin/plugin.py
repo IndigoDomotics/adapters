@@ -311,7 +311,7 @@ class Plugin(indigo.PluginBase):
         from Tests import test_plugin
         plugin_tests = test_plugin.TestPlugin()
         simple_eval_tests = test_plugin.TestSimpleEval()
-        sensor_adapter_tests = test_plugin.TestSensorAdapter()
+        # sensor_adapter_tests = test_plugin.TestSensorAdapter()
 
         def process_test_result(result, name):
             if result[0] is True:
@@ -323,5 +323,7 @@ class Plugin(indigo.PluginBase):
         process_test_result(test, "Plugin")
         test = simple_eval_tests.test_simple_eval(self)
         process_test_result(test, "Simple Eval")
-        test = sensor_adapter_tests.test_sensor_adapter(self)
-        process_test_result(test, "Sensor Adapter")
+        # test = sensor_adapter_tests.test_sensor_adapter(self)  # There are no sensor adapter tests at this time.
+        # process_test_result(test, "Sensor Adapter")
+        self.logger.warning("There are no Sensor Adapter tests yet.")
+        self.logger.warning("There are no pyrescaler tests yet.")
