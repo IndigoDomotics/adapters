@@ -1,6 +1,20 @@
 """
 Unit tests that require access to the IOM go here.
 
+To run these tests, you will need a copy of the plugin installed and running on the active server. Create an action item
+that calls the hidden `my_tests` action using an embedded script like the following:
+
+    plugin_id = "com.drjason.temp-adapter"
+    plugin = indigo.server.getPlugin(plugin_id)
+
+    try:
+        if indigo.PluginInfo.isRunning(plugin):
+            plugin.executeAction("my_tests")
+        else:
+            indigo.server.log("Plugin not enabled.")
+    except Exception as err:
+        indigo.server.log(f"{err}")
+
 Tests should be added to this file when appropriate.
 """
 from unittest import TestCase
