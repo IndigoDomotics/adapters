@@ -45,7 +45,7 @@ class TestPlugin(TestCase):
             result = plugin.show_formula_result(values_dict, "", 0)
             test_case.assertIsInstance(result, dict, "Method should return a dict object.")
             test_case.assertIsInstance(result['formula_test'], str, "Method should return a string object.")
-            test_case.assertEqual(result['formula_test'], f'{value / 2} ºF', "Method didn't return a properly formatted value.")
+            test_case.assertEqual(result['formula_test'], f'{value / 2:0.2f} ºF', "Method didn't return a properly formatted value.")
 
             # ===================================== get_scales() =====================================
             values_dict = {}
