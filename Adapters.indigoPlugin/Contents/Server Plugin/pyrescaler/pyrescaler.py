@@ -166,6 +166,7 @@ class AffineScaledMeasurement(ScaledMeasurement):
         """
         Docstring placeholder
         """
+        super().__init__()
         self.offset = offset
         self.multiplier = multiplier
         self.format_string = format_string
@@ -193,6 +194,7 @@ class ArbitraryFormulaScaledMeasurement(ScaledMeasurement):
 
     # ==============================================================================
     def __init__(self, formula="x", format_string="{0:.1f}"):
+        super().__init__()
         self.formula = formula
         self.format_string = format_string
 

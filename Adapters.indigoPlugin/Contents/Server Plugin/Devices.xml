@@ -34,7 +34,7 @@
 					<Option value="3">1.000</Option>
 				</List>
 			</Field>
-			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsSensorValue" type="textfield" hidden="true" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
@@ -78,7 +78,7 @@
 		    <Title>Formatting Help</Title>
 		    <CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 		  	</Field>
-			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsSensorValue" type="textfield" hidden="true" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>
@@ -131,7 +131,7 @@
 				<Title>Formatting Help</Title>
 				<CallbackMethod>open_browser_to_python_format_help</CallbackMethod>
 			</Field>
-			<Field id="SupportsSensorValue" type="textfield" hidden="True" defaultValue="True"/>
+			<Field id="SupportsSensorValue" type="textfield" hidden="true" defaultValue="True"/>
 			<Field id="SupportsStatusRequest" type="textfield" hidden="true" defaultValue="False"/>
 			<Field id="SupportsOnState" type="textfield" hidden="true" defaultValue="False"/>
 		</ConfigUI>

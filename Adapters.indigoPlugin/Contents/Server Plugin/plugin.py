@@ -33,7 +33,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2023.2.0'
+__version__   = '2024.1.0'
 
 
 # ==============================================================================
@@ -76,18 +76,12 @@ class Plugin(indigo.PluginBase):
         # =============================== Debug Logging ================================
         self.debug_logging()
 
-        # ============================= Remote Debugging ===============================
-        # try:
-        #     pydevd.settrace('localhost', port=5678, stdoutToServer=True, stderrToServer=True, suspend=False)
-        # except:
-        #     pass
-
         # "Subscribe to Changes" from all indigo devices, so we can update our 'converted' values
         # any time the native value changes.
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
-    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
+    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
         """
         Docstring placeholder
 
@@ -98,7 +92,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug("address_changed")
 
     # ==============================================================================
-    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict):
+    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict) -> None:
         """
         Docstring placeholder
 
@@ -111,7 +105,7 @@ class Plugin(indigo.PluginBase):
                 adapter.go()
 
     # ==============================================================================
-    def debug_logging(self):
+    def debug_logging(self) -> None:
         """
         The Adapters Plugin logging is minimal due to the fact that the plugin is a shim on top of other objects. For
         example, a sensor changes (which would typically be logged by Indigo or another plugin) so an additional log
@@ -131,7 +125,7 @@ class Plugin(indigo.PluginBase):
         self.pyrescaler_logger.setLevel(self.debug_level)
 
     # ==============================================================================
-    def device_start_comm(self, dev: indigo.Device):
+    def device_start_comm(self, dev: indigo.Device) -> None:
         """
         Docstring placeholder
 
@@ -153,7 +147,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug(f"added adapter: {new_device.name()}")
 
     # ==============================================================================
-    def device_stop_comm(self, dev: indigo.Device):
+    def device_stop_comm(self, dev: indigo.Device) -> None:
         """
         Docstring placeholder
 
@@ -186,7 +180,7 @@ class Plugin(indigo.PluginBase):
             self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
     ) -> list:
         """
-        Docstring placeholder
+        Return a list of device/states with numeric values
 
         :param str _filter:
         :param indigo.Dict values_dict:
@@ -209,9 +203,7 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
-    def get_scales(
-            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
-    ) -> list:
+    def get_scales(self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> list:
         """
         Docstring placeholder
 
@@ -229,9 +221,7 @@ class Plugin(indigo.PluginBase):
         return opts
 
     # ==============================================================================
-    def open_browser_to_python_format_help(
-            self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
-    ):
+    def open_browser_to_python_format_help(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
         """
         Docstring placeholder
 
@@ -242,7 +232,7 @@ class Plugin(indigo.PluginBase):
         self.browserOpen("https://pyformat.info")
 
     # ==============================================================================
-    def scale_type_changed(self, values_dict=None, type_id="", target_id=0):
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0) -> None:
         """
         Called by Devices.xml when a Predefined Scale Adapter scale type is changed.
         """
@@ -299,14 +289,41 @@ class Plugin(indigo.PluginBase):
         return values_dict
 
     # ==============================================================================
-    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> bool:
+    def validate_prefs_config_ui(self, values_dict: indigo.Dict) -> tuple:
         """
         Docstring placeholder
 
         :param indigo.Dict values_dict:
         """
-        self.debug_level = int(values_dict['showDebugLevel'])
-        self.indigo_log_handler.setLevel(self.debug_level)
-        self.sensor_logger.setLevel(self.debug_level)
-        self.pyrescaler_logger.setLevel(self.debug_level)
-        return True
+        error_msg_dict = indigo.Dict()
+        try:
+            self.debug_level = int(values_dict['showDebugLevel'])
+            self.indigo_log_handler.setLevel(self.debug_level)
+            self.sensor_logger.setLevel(self.debug_level)
+            self.pyrescaler_logger.setLevel(self.debug_level)
+            return True, values_dict
+        except TypeError as error:
+            error_msg_dict['showDebugLevel'] = "The debug level is invalid"
+            return False, values_dict, error_msg_dict
+
+    # ==============================================================================
+    def my_tests(self, action=None):
+        from Tests import test_plugin
+        plugin_tests = test_plugin.TestPlugin()
+        simple_eval_tests = test_plugin.TestSimpleEval()
+        # sensor_adapter_tests = test_plugin.TestSensorAdapter()
+
+        def process_test_result(result, name):
+            if result[0] is True:
+                self.logger.warning(f"{name} tests passed.")
+            else:
+                self.logger.warning(f"{result[1]}")
+
+        test = plugin_tests.test_plugin(self)
+        process_test_result(test, "Plugin")
+        test = simple_eval_tests.test_simple_eval(self)
+        process_test_result(test, "Simple Eval")
+        # test = sensor_adapter_tests.test_sensor_adapter(self)  # There are no sensor adapter tests at this time.
+        # process_test_result(test, "Sensor Adapter")
+        self.logger.warning("There are no Sensor Adapter tests yet.")
+        self.logger.warning("There are no pyrescaler tests yet.")

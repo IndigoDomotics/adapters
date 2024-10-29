@@ -73,6 +73,7 @@ You can pass names, operators and functions to the simple_eval function as well:
 """
 
 import ast
+import logging
 import sys
 import operator as op
 from random import random
@@ -83,6 +84,7 @@ from random import random
 MAX_STRING_LENGTH = 100000
 MAX_POWER = 4000000  # highest exponent
 PYTHON3 = sys.version_info[0] == 3
+LOGGER = logging.getLogger("Plugin")
 
 ########################################
 # Exceptions:
@@ -96,9 +98,7 @@ class InvalidExpression(Exception):
 class FunctionNotDefined(InvalidExpression):
     """ sorry! That function isn't defined! """
     def __init__(self, func_name, expression):
-        self.message = (
-            f"Function '{func_name}' not defined, for expression '{expression}'."
-        )
+        self.message = f"Function '{func_name}' not defined, for expression '{expression}'."
         self.func_name = func_name
         self.expression = expression
 
@@ -171,8 +171,7 @@ def safe_add(a, b):  # pylint: disable=invalid-name
     """ string length limit again """
     if isinstance(a, str) and isinstance(b, str):
         if len(a) + len(b) > MAX_STRING_LENGTH:
-            raise StringTooLong("Sorry, adding those two strings would"
-                                " make a too long string.")
+            raise StringTooLong("Sorry, adding those two strings would make a too long string.")
     return a + b
 
 
@@ -205,7 +204,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
     expr = ""
 
     def __init__(self, operators=None, functions=None, names=None):
-        """ Create the evaluator instance.  Set up valid operators (+,-, etc) functions (add,
+        """ Create the evaluator instance.  Set up valid operators (+,-, etc.) functions (add,
         random, get_val, whatever) and names. """
 
         if not operators:
@@ -240,8 +239,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
         elif isinstance(node, ast.Str):  # <string>
             if len(node.s) > MAX_STRING_LENGTH:
                 raise StringTooLong(
-                    f"String Literal in statement is too long! ({len(node.s)}, "
-                    f"when {MAX_STRING_LENGTH} is max)"
+                    f"String Literal in statement is too long! ({len(node.s)}, when {MAX_STRING_LENGTH} is max)"
                 )
             return node.s
 
@@ -256,18 +254,14 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
         elif isinstance(node, ast.UnaryOp):  # - and + etc.
             return self.operators[type(node.op)](self._eval(node.operand))
         elif isinstance(node, ast.BinOp):  # <left> <operator> <right>
-            return self.operators[type(node.op)](self._eval(node.left),
-                                                 self._eval(node.right)
-                                                 )
+            return self.operators[type(node.op)](self._eval(node.left), self._eval(node.right))
         elif isinstance(node, ast.BoolOp):  # and & or...
             if isinstance(node.op, ast.And):
                 return all((self._eval(v) for v in node.values))
             elif isinstance(node.op, ast.Or):
                 return any((self._eval(v) for v in node.values))
         elif isinstance(node, ast.Compare):  # 1 < 2, a == b...
-            return self.operators[type(node.ops[0])](self._eval(node.left),
-                                                     self._eval(node.comparators[0])
-                                                     )
+            return self.operators[type(node.ops[0])](self._eval(node.left), self._eval(node.comparators[0]))
         elif isinstance(node, ast.IfExp):  # x if y else z
             return self._eval(node.body) if self._eval(node.test) \
                                          else self._eval(node.orelse)
@@ -294,8 +288,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
                     return self.names(node)
                 else:
                     raise InvalidExpression(
-                        f'Trying to use name (variable) "{node.id}" when no "names" defined for '
-                        f'evaluator'
+                        f'Trying to use name (variable) "{node.id}" when no "names" defined for evaluator'
                     )
 
             except KeyError:
@@ -331,9 +324,7 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
                 step = self._eval(node.step)
             return slice(lower, upper, step)
         else:
-            raise FeatureNotAvailable(
-                f"Sorry, {type(node).__name__} is not available in this evaluator"
-            )
+            raise FeatureNotAvailable(f"Sorry, {type(node).__name__} is not available in this evaluator")
 
 
 def simple_eval(expr, operators=None, functions=None, names=None):
