@@ -1,4 +1,9 @@
-### v\1025.2.0
+### v2025.2.1
+- Fixes duplicate `indigo.Device` append in `device_start_comm`.
+- Fixes `_is_number` not catching `TypeError` for `None` and non-numeric state values.
+
+
+### v2025.2.0
 - Removes Actions.xml and MenuItems.xml server plugin files.
 - Updates simpleeval for Python 3 compatibility.
 - Code cleanup and bug fixes.

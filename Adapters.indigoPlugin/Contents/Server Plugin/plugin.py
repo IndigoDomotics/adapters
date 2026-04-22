@@ -47,7 +47,7 @@ def _is_number(val) -> bool:
     try:
         float(val)
         return True
-    except ValueError:
+    except (TypeError, ValueError):
         return False
 
 
@@ -132,7 +132,6 @@ class Plugin(indigo.PluginBase):
         :param indigo.Device dev:
         """
         self.logger.debug("device_start_comm: %s" % dev.pluginProps['address'])
-        self.active_adapters.append(dev)
 
         # in case any states added/removed after plugin upgrade
         dev.stateListOrDisplayStateIdChanged()
