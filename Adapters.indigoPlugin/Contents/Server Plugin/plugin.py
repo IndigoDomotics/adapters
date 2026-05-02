@@ -17,7 +17,7 @@ Originally authored by forum user `dustysparkle`.
 Contributions by: DaveL17
 """
 
-import logging  # NOTE: logging must be imported after pyrescaler
+import logging
 import simpleeval
 from sensor_adapter import SensorAdapter
 from pyrescaler.pyrescaler import get_scale_options
@@ -33,7 +33,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2025.1.0'
+__version__   = '2025.2.1'
 
 
 # ==============================================================================
@@ -92,7 +92,7 @@ class Plugin(indigo.PluginBase):
         self.logger.debug("address_changed")
 
     # ==============================================================================
-    def device_updated(self, orig_dev: indigo.Dict, new_dev: indigo.Dict) -> None:
+    def device_updated(self, orig_dev: indigo.Device, new_dev: indigo.Device) -> None:
         """
         Docstring placeholder
 
@@ -157,6 +157,10 @@ class Plugin(indigo.PluginBase):
             adapter for adapter in self.active_adapters
             if adapter.address != dev.pluginProps["address"]
         ]
+        self.adapters_for_device = {
+            native_id: [a for a in adapters if a.address != dev.pluginProps["address"]]
+            for native_id, adapters in self.adapters_for_device.items()
+        }
 
     # ==============================================================================
     @staticmethod
@@ -263,6 +267,9 @@ class Plugin(indigo.PluginBase):
 
         # Get the formula expression
         if type_id == "customConvertedSensor":
+            if not multiplier or not offset:
+                error_msg_dict['formula'] = "Multiplier and offset must be set before testing."
+                return (values_dict, error_msg_dict)
             val_formula = f"({val_value} * {multiplier}) + {offset}"
         else:
             val_formula = values_dict['formula']
@@ -279,7 +286,7 @@ class Plugin(indigo.PluginBase):
         try:
             result = formatter.format(result)
             if len(result) == 0:
-                raise Exception
+                raise ValueError("Format expression produced an empty result.")
         except Exception as err:
             error_msg_dict['format'] = f"Invalid Format Expression: {err}"
             self.logger.debug("Invalid Format Specifier: %s" % formatter)
@@ -302,6 +309,6 @@ class Plugin(indigo.PluginBase):
             self.sensor_logger.setLevel(self.debug_level)
             self.pyrescaler_logger.setLevel(self.debug_level)
             return True, values_dict
-        except TypeError:
+        except (TypeError, ValueError):
             error_msg_dict['showDebugLevel'] = "The debug level is invalid"
             return False, values_dict, error_msg_dict
