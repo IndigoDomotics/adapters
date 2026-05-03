@@ -26,7 +26,7 @@
 - More code typing.
 - Unit tests.
 
-### v2023.2.0
+### v2023.2.0 [released]
 - Code refinements.
 - Basic wiki pages.
 - Fixes `plugin does not define method scale_type_changed` error.
