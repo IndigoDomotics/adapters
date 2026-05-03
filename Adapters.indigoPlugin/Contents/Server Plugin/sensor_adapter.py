@@ -4,6 +4,7 @@ Docstring placeholder
 import logging
 import indigo  # noqa
 from pyrescaler.pyrescaler import (get_converter, AffineScaledMeasurement, ArbitraryFormulaScaledMeasurement)
+from typing import Any
 
 
 # ==============================================================================
@@ -51,15 +52,15 @@ class SensorAdapter:
         return self.delegate.name()
 
     # ==============================================================================
-    def go(self) -> str:
+    def go(self) -> str | None:
         """
         Docstring placeholder
         """
         try:
             native_value = indigo.devices[self.native_device_id].states[self.native_device_state_name]
 
-            converted_txt = self.desired_scale.format(native_value)
-            converted_value = self.desired_scale.convert(native_value)
+            converted_txt: str = self.desired_scale.format(native_value)
+            converted_value: Any = self.desired_scale.convert(native_value)
 
             self.dev.updateStateOnServer(
                 key="sensorValue",
@@ -67,7 +68,7 @@ class SensorAdapter:
                 decimalPlaces=self.precision,
                 uiValue=converted_txt
             )
-            self.logging.debug(" %s  converted to: [ %s ]" % (self.name(), converted_txt))
+            self.logging.debug("%s converted to: [ %s ]" % (self.name(), converted_txt))
 
             return converted_txt
 

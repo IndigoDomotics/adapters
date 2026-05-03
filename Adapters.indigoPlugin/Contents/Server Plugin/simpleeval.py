@@ -234,19 +234,12 @@ class SimpleEval(object):  # pylint: disable=too-few-public-methods
 
         # literals:
 
-        if isinstance(node, ast.Num):  # <number>
-            return node.n
-        elif isinstance(node, ast.Str):  # <string>
-            if len(node.s) > MAX_STRING_LENGTH:
-                raise StringTooLong(
-                    f"String Literal in statement is too long! ({len(node.s)}, when {MAX_STRING_LENGTH} is max)"
-                )
-            return node.s
-
-        # python 3 compatibility:
-
-        elif (hasattr(ast, 'NameConstant') and
-                isinstance(node, ast.NameConstant)):  # <bool>
+        if isinstance(node, ast.Constant):
+            if isinstance(node.value, str):
+                if len(node.value) > MAX_STRING_LENGTH:
+                    raise StringTooLong(
+                        f"String Literal in statement is too long! ({len(node.value)}, when {MAX_STRING_LENGTH} is max)"
+                    )
             return node.value
 
         # operators, functions, etc:
