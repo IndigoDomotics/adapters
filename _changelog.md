@@ -1,6 +1,8 @@
 ### v2025.2.1
-- Fixes `device_stop_comm` not cleaning up `adapters_for_device`, causing stopped adapters to continue receiving updates.
-- Fixes `validate_prefs_config_ui` only catching `TypeError` when `ValueError` is also possible for invalid debug level input.
+- Fixes `device_stop_comm` not cleaning up `adapters_for_device`, causing stopped adapters to continue receiving 
+  updates.
+- Fixes `validate_prefs_config_ui` only catching `TypeError` when `ValueError` is also possible for invalid debug level 
+  input.
 - Fixes incorrect `indigo.Dict` type annotations on `device_updated` parameters (should be `indigo.Device`).
 - Fixes `show_formula_result` building an invalid formula string when multiplier or offset is empty.
 - Fixes bare `raise Exception` in format validation producing an empty error message.
